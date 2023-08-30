@@ -22,8 +22,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final ItemMapper itemMapper;
     private final UserStorage userStorage;
-
-    int itemId = 1;
+    private int itemId = 1;
 
     @Override
     public ItemDto create(ItemDto itemDto, int userId) {
@@ -52,7 +51,8 @@ public class ItemServiceImpl implements ItemService {
         }
         if (userId == itemToChange.getOwner()) {
             if (item.getName() != null) {
-                itemToChange.setName(item.getName());}
+                itemToChange.setName(item.getName());
+            }
             if (item.getDescription() != null) {
                 itemToChange.setDescription(item.getDescription());
             }
