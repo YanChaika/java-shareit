@@ -50,22 +50,26 @@ public class ItemServiceImpl implements ItemService {
             item = itemMapper.fromItemUpdateDto(itemDto, itemToChange.isAvailable(), userId, itemId);
         }
         if (userId == itemToChange.getOwner()) {
-            if (item.getName() != null) {
-                itemToChange.setName(item.getName());
-            }
-            if (item.getDescription() != null) {
-                itemToChange.setDescription(item.getDescription());
-            }
-            if (item.isAvailable()) {
-                itemToChange.setAvailable(true);
-            }
-            if (!item.isAvailable()) {
-                itemToChange.setAvailable(false);
-            }
+            isValidateItem(item, itemToChange);
             itemStorage.update(itemToChange);
             return itemMapper.toFullItemDto(itemToChange);
         } else {
             throw new NotFoundException("Вы не являетесь владельцем вещи");
+        }
+    }
+
+    private void isValidateItem (Item item, Item itemToChange) {
+        if (item.getName() != null) {
+            itemToChange.setName(item.getName());
+        }
+        if (item.getDescription() != null) {
+            itemToChange.setDescription(item.getDescription());
+        }
+        if (item.isAvailable()) {
+            itemToChange.setAvailable(true);
+        }
+        if (!item.isAvailable()) {
+            itemToChange.setAvailable(false);
         }
     }
 

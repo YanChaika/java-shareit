@@ -8,9 +8,6 @@ import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -19,7 +16,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto postUser(@Valid @RequestBody ItemDto itemDto,
+    public ItemDto createUser(@Valid @RequestBody ItemDto itemDto,
                             @RequestHeader("X-Sharer-User-Id") int userId) {
         return itemService.create(itemDto, userId);
     }
