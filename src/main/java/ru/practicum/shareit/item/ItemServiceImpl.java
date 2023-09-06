@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void isValidateItem (Item item, Item itemToChange) {
+    private void isValidateItem(Item item, Item itemToChange) {
         if (item.getName() != null) {
             itemToChange.setName(item.getName());
         }
