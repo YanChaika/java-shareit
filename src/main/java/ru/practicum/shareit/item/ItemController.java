@@ -2,8 +2,8 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.item.dto.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,30 +16,41 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createUser(@Valid @RequestBody ItemDto itemDto,
-                            @RequestHeader("X-Sharer-User-Id") int userId) {
+    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
+                              @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.create(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateUser(@RequestBody ItemUpdateDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") int userId,
-                              @PathVariable Integer itemId) {
+                              @RequestHeader("X-Sharer-User-Id") Long userId,
+                              @PathVariable Long itemId) {
         return itemService.update(itemDto, userId, itemId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemBuId(@PathVariable Integer itemId) {
-        return itemService.findItemById(itemId);
+    public ItemDtoWithBookingDates getItemBuId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                               @PathVariable Long itemId) {
+        return itemService.findItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") int userId) {
+    public List<ItemDtoWithBookingDates> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAllByUserId(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> getItemByText(@RequestParam(required = false) String text) {
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentFullDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                        @PathVariable Long itemId,
+                                        @Valid @RequestBody CommentDto comment) {
+        if (comment.getText().isBlank()) {
+            throw new ValidationException("text is empty");
+        }
+        return itemService.createComment(comment, itemId, userId);
     }
 }

@@ -12,9 +12,9 @@ public interface UserStorage {
 
     User update(User user);
 
-    void delete(Integer id);
+    void delete(Long id);
 
     User findUserByEmail(String email);
 
-    User findUserById(Integer id);
+    User findUserById(Long id);
 }
