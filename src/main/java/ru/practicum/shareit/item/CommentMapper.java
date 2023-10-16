@@ -8,26 +8,37 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Component
 public class CommentMapper {
 
-    public static Comment fromCommentDto(CommentDto commentDto, Item item, User user) {
+    public static Comment fromCommentDto(CommentDto commentDto, Item item, User user, LocalDateTime time) {
         return new Comment(
                 commentDto.getId(),
             commentDto.getText(),
             item,
-            user
+            user,
+            time
         );
     }
 
-    public static CommentFullDto toCommentFullDto(Comment comment, LocalDateTime time) {
+    public static CommentFullDto toCommentFullDto(Comment comment) {
         return new CommentFullDto(
                 comment.getId(),
                 comment.getText(),
                 comment.getItem(),
                 comment.getAuthor(),
-                time
+                comment.getAuthor().getName(),
+                comment.getCreated().toString()
         );
+    }
+
+    public static List<CommentFullDto> toCommentsFullDto(List<Comment> comments) {
+        List<CommentFullDto> commentsFullDto = new ArrayList<>();
+        for (Comment comment : comments) {
+            commentsFullDto.add(toCommentFullDto(comment));
+        }
+        return commentsFullDto;
     }
 }

@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.dto.BookingToItemDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.dto.CommentFullDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingDates;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
@@ -10,7 +12,6 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-@Component
 public class ItemMapper {
 
     public static ItemDto toFullItemDto(Item item) {
@@ -25,7 +26,7 @@ public class ItemMapper {
     }
 
     public static ItemDtoWithBookingDates toItemDtoWithBookingDates(
-            Item item, Booking lastBooking, Booking nextBooking, List<Comment> comment) {
+            Item item, BookingToItemDto lastBooking, BookingToItemDto nextBooking, List<CommentFullDto> comment) {
         return new ItemDtoWithBookingDates(
                 item.getId(),
                 item.getName(),

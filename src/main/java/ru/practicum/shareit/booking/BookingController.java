@@ -41,20 +41,26 @@ public class BookingController {
         return bookingService.getByUserIdAndState(userId, setStatus(state));
     }
 
-    private BookingStatus setStatus(String state) {
+    private BookingState setStatus(String state) {
         switch(state) {
             case "ALL":
-                return BookingStatus.ALL;
+                //return BookingStatus.ALL;
+                return BookingState.ALL;
             case "CURRENT":
-                return BookingStatus.CURRENT;
+                //return BookingStatus.CURRENT;
+                return BookingState.CURRENT;
             case "PAST":
-                return BookingStatus.PAST;
+                //return BookingStatus.PAST;
+                return BookingState.PAST;
             case "FUTURE":
-                return BookingStatus.FUTURE;
+                //return BookingStatus.FUTURE;
+                return BookingState.FUTURE;
             case "WAITING":
-                return BookingStatus.WAITING;
+                return BookingState.WAITING;
             case "REJECTED":
-                return BookingStatus.REJECTED;
+                return BookingState.REJECTED;
+            case "APPROVED":
+                return BookingState.APPROVED;
             default:
                 throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }

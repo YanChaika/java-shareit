@@ -8,12 +8,14 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-@Getter@Setter
+@Getter
+@Setter
 @AllArgsConstructor
 public class CommentFullDto {
     private Long id;
     private String text;
     private Item item;
     private User author;
-    private LocalDateTime created;
+    private String authorName;
+    private String created;
 }

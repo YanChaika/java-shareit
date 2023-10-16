@@ -15,10 +15,9 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 
+import java.awt.print.Book;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -105,7 +104,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Transactional
     @Override
-    public List<BookingFullDto> getByUserIdAndState(Long userId, BookingStatus state) {
+    public List<BookingFullDto> getByUserIdAndState(Long userId, BookingState state) {
         log.info("Получение бронирования по id");
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь с id " + userId + " не найден")
@@ -113,11 +112,13 @@ public class BookingServiceImpl implements BookingService{
         List<Item> items = itemRepository.findAll();
         List<Booking> bookingsByUser = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
         List<Booking> sortedBookings = sortedByState(bookingsByUser, state, LocalDateTime.now());
+        //Set<Booking> reverseSortedBookings = new HashSet<>(sortedBookings);
+        //List<Booking> toReturn = new ArrayList<>(reverseSortedBookings);
         return BookingMapper.foBookingsFullDto(sortedBookings);
     }
 
     @Override
-    public List<BookingFullDto> getAllBookingByItemsForUserId(Long userId, BookingStatus state) {
+    public List<BookingFullDto> getAllBookingByItemsForUserId(Long userId, BookingState state) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("User с id " + userId + " не найден")
         );
@@ -130,36 +131,36 @@ public class BookingServiceImpl implements BookingService{
         return BookingMapper.foBookingsFullDto(sortedBookings);
     }
 
-    private List<Booking> sortedByState(List<Booking> bookings, BookingStatus state, LocalDateTime time) {
+    private List<Booking> sortedByState(List<Booking> bookings, BookingState state, LocalDateTime time) {
         List<Booking> sortedBooking = new ArrayList<>();
-        if (state.equals(BookingStatus.ALL)) {
+        if (state.equals(BookingState.ALL)) {
             return bookings;
-        } else if (state.equals(BookingStatus.FUTURE)) {
+        } else if (state.equals(BookingState.FUTURE)) {
             for (Booking booking : bookings) {
                 if ((booking.getStart().isAfter(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
                     sortedBooking.add(booking);
                 }
             }
             return sortedBooking;
-        } else if (state.equals(BookingStatus.PAST)) {
+        } else if (state.equals(BookingState.PAST)) {
             for (Booking booking : bookings) {
                 if ((booking.getEnd().isBefore(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
                     sortedBooking.add(booking);
                 }
             }
             return sortedBooking;
-        } else if (state.equals(BookingStatus.CURRENT)) {
+        } else if (state.equals(BookingState.CURRENT)) {
             for (Booking booking : bookings) {
                 if ((booking.getEnd().isAfter(time)) &&
-                        (booking.getStart().isBefore(time)) &&
-                        (!booking.getStatus().equals(BookingStatus.REJECTED))) {
+                        (booking.getStart().isBefore(time))/* &&
+                        (!booking.getStatus().equals(BookingStatus.REJECTED))*/) {
                     sortedBooking.add(booking);
                 }
             }
             return sortedBooking;
         } else {
             for (Booking booking : bookings) {
-                if (booking.getStatus().equals(state)) {
+                if (booking.getStatus().toString().equals(state.toString())) {
                     sortedBooking.add(booking);
                 }
             }

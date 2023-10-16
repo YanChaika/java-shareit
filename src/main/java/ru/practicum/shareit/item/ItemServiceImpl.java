@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingToItemDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
@@ -103,17 +105,19 @@ public class ItemServiceImpl implements ItemService {
             }
             Optional<Booking> lastBooking = Optional.empty();
             Optional<Booking> nextBooking = Optional.empty();
+            //BookingToItemDto lastBookingToItemDto = BookingMapper.toBookingToItemDto(lastBooking.get());
+            //BookingToItemDto nextBookingToItemDto = BookingMapper.toBookingToItemDto(nextBooking.get());
             Long itemId = itemO.get().getId();
-            List<Comment> com = commentRepository.findAllByItemId(itemId);
+            //List<Comment> com = commentRepository.findAllByItemId(itemId);
             List<Comment> comments = commentRepository.findAll();
             List<Comment> comment = new ArrayList<>();
             if (!comments.isEmpty()) {
                 comment = commentRepository.findAllByItemId(itemO.get().getId());
             }
             for (Booking booking : bookings) {
-                if (booking.getEnd().isBefore(LocalDateTime.now())) {
+                if (booking.getStart().isBefore(LocalDateTime.now())) {
                     if (lastBooking.isPresent()) {
-                        if (booking.getEnd().isAfter(lastBooking.get().getEnd())) {
+                        if (booking.getStart().isAfter(lastBooking.get().getStart())) {
                             lastBooking = Optional.of(booking);
                         }
                     } else {
@@ -121,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
                     }
                 } else {
                     if (nextBooking.isPresent()) {
-                        if (booking.getEnd().isBefore(nextBooking.get().getEnd())) {
+                        if (booking.getStart().isBefore(nextBooking.get().getStart())) {
                             nextBooking = Optional.of(booking);
                         }
                     } else {
@@ -134,28 +138,36 @@ public class ItemServiceImpl implements ItemService {
                         itemO.get(),
                         null,
                         null,
-                        comment
+                        //comment
+                        CommentMapper.toCommentsFullDto(comment)
                 );
             } else if (lastBooking.isEmpty()) {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
                         null,
-                        nextBooking.get(),
-                        comment
+                        //nextBooking.get(),
+                        BookingMapper.toBookingToItemDto(nextBooking.get()),
+                        CommentMapper.toCommentsFullDto(comment)
+                        //comment
                 );
             } else if (nextBooking.isEmpty()) {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
-                        lastBooking.get(),
+                        //lastBooking.get(),
+                        BookingMapper.toBookingToItemDto(lastBooking.get()),
                         null,
-                        comment
+                        CommentMapper.toCommentsFullDto(comment)
+                        //comment
                 );
             } else {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
-                        lastBooking.get(),
-                        nextBooking.get(),
-                        comment
+                        //lastBooking.get(),
+                        //nextBooking.get(),
+                        BookingMapper.toBookingToItemDto(lastBooking.get()),
+                        BookingMapper.toBookingToItemDto(nextBooking.get()),
+                        CommentMapper.toCommentsFullDto(comment)
+                        //comment
                 );
             }
         }
@@ -180,13 +192,16 @@ public class ItemServiceImpl implements ItemService {
                 List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(item.getId());
                 Optional<Booking> lastBooking = Optional.empty();
                 Optional<Booking> nextBooking = Optional.empty();
+                //BookingToItemDto lastBookingToItemDto = BookingMapper.toBookingToItemDto(lastBooking.get());
+                //BookingToItemDto nextBookingToItemDto = BookingMapper.toBookingToItemDto(nextBooking.get());
                 List<Comment> comments = commentRepository.findAll();
                 List<Comment> comment = new ArrayList<>();
                 if (!comments.isEmpty()) {
                     comment = commentRepository.findAllByItemId(item.getId());
                 }
+                LocalDateTime createdTime = LocalDateTime.now();
                 for (Booking booking : bookings) {
-                    if (booking.getEnd().isBefore(LocalDateTime.now())) {
+                    if (booking.getEnd().isBefore(createdTime)) {
                         if (lastBooking.isPresent()) {
                             if (booking.getEnd().isAfter(lastBooking.get().getEnd())) {
                                 lastBooking = Optional.of(booking);
@@ -209,28 +224,36 @@ public class ItemServiceImpl implements ItemService {
                             item,
                             null,
                             null,
-                            comment
+                            CommentMapper.toCommentsFullDto(comment)
+                            //comment
                     ));
                 } else if (lastBooking.isEmpty()) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
                             null,
-                            nextBooking.get(),
-                            comment
+                            //nextBooking.get(),
+                            BookingMapper.toBookingToItemDto(nextBooking.get()),
+                            CommentMapper.toCommentsFullDto(comment)
+                            //comment
                     ));
                 } else if (nextBooking.isEmpty()) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
-                            lastBooking.get(),
+                            //lastBooking.get(),
+                            BookingMapper.toBookingToItemDto(nextBooking.get()),
                             null,
-                            comment
+                            CommentMapper.toCommentsFullDto(comment)
+                            //comment
                     ));
                 } else {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
-                            lastBooking.get(),
-                            nextBooking.get(),
-                            comment
+                            //lastBooking.get(),
+                            //nextBooking.get(),
+                            BookingMapper.toBookingToItemDto(lastBooking.get()),
+                            BookingMapper.toBookingToItemDto(nextBooking.get()),
+                            CommentMapper.toCommentsFullDto(comment)
+                            //comment
                     ));
                 }
             }
@@ -260,20 +283,28 @@ public class ItemServiceImpl implements ItemService {
         Optional<Item> item = itemRepository.findById(itemId);
         List<Booking> bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
         List<User> user = userRepository.findAll();
+        LocalDateTime createdTime = LocalDateTime.now();
         if (bookings.isEmpty()) {
             throw new NotFoundException("У вас нет ни одного бронирования");
         }
         for (Booking booking : bookings) {
             if ((booking.getItem().getId().equals(itemId)) &&
                     (!booking.getStatus().equals(BookingStatus.REJECTED)) &&
-                    (booking.getEnd().isBefore(LocalDateTime.now()))) {
-                Comment comment = CommentMapper.fromCommentDto(
+                    (booking.getEnd().isBefore(createdTime))) {
+                /*Comment comment = CommentMapper.fromCommentDto(
                         commentSto,
                         itemRepository.findById(itemId).get(),
-                        userRepository.findById(userId).get()
+                        userRepository.findById(userId).get(),
+                        LocalDateTime.now()
                 );
                 Comment savedComment = commentRepository.save(comment);
-                return CommentMapper.toCommentFullDto(savedComment, LocalDateTime.now());
+                return CommentMapper.toCommentFullDto(savedComment);*/
+                return CommentMapper.toCommentFullDto(commentRepository.save(
+                        CommentMapper.fromCommentDto(
+                                commentSto,
+                                item.get(),
+                                userRepository.findById(userId).get(),
+                                LocalDateTime.now())));
             }
         }
         throw new ValidationException("У вас не было подтвержденного бронирования вещи с id :" + itemId);

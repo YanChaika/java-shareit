@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingToItemDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Comment;
 
@@ -24,7 +25,7 @@ public class ItemDtoWithBookingDates {
     private boolean available;
     private Long owner;
     private Integer request;
-    private Booking lastBooking;
-    private Booking nextBooking;
-    private List<Comment> comments;
+    private BookingToItemDto lastBooking;
+    private BookingToItemDto nextBooking;
+    private List<CommentFullDto> comments;
 }

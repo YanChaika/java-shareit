@@ -5,8 +5,10 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-@Getter@Setter
+@Getter
+@Setter
 @Entity
 @Table(name = "comments")
 @AllArgsConstructor
@@ -26,4 +28,5 @@ public class Comment {
     @ManyToOne
     @ToString.Exclude
     private User author;
+    private LocalDateTime created;
 }

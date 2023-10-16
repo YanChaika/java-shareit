@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingFullDto;
+import ru.practicum.shareit.booking.dto.BookingToItemDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -12,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 @RequiredArgsConstructor
 public class BookingMapper {
 
@@ -58,5 +58,16 @@ public class BookingMapper {
             bookingsFullDto.add(BookingMapper.toBookingFullDto(booking, booking.getBooker(), booking.getItem()));
         }
         return bookingsFullDto;
+    }
+
+    public static BookingToItemDto toBookingToItemDto(Booking booking) {
+        return new BookingToItemDto(
+                booking.getId(),
+                booking.getStart(),
+                booking.getEnd(),
+                booking.getItem(),
+                booking.getBooker().getId(),
+                booking.getStatus()
+        );
     }
 }
