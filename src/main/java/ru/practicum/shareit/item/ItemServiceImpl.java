@@ -36,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto create(ItemDto itemDto, Long userId) {
         log.info("Добавление вещи");
-        if (userRepository.findById(userId).isEmpty() ) {
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
         Item item = ItemMapper.fromItemDto(itemDto, true, userId);
@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto update(ItemUpdateDto itemDto, Long userId, Long itemId) {
         log.info("Обновление вещи");
-        if (userRepository.findById(userId).isEmpty() ) {
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
         List<Item> items = itemRepository.findAll();
@@ -205,7 +205,7 @@ public class ItemServiceImpl implements ItemService {
                         }
                     }
                 }
-                if (((lastBooking.isEmpty())&&(nextBooking.isEmpty()))||(item.getOwnerId() != userId)) {
+                if (((lastBooking.isEmpty()) && (nextBooking.isEmpty())) || (item.getOwnerId() != userId)) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
                             null,

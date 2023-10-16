@@ -42,7 +42,7 @@ public class BookingController {
     }
 
     private BookingState setStatus(String state) {
-        switch(state) {
+        switch (state) {
             case "ALL":
                 return BookingState.ALL;
             case "CURRENT":
