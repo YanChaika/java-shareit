@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingToItemDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
@@ -105,10 +104,7 @@ public class ItemServiceImpl implements ItemService {
             }
             Optional<Booking> lastBooking = Optional.empty();
             Optional<Booking> nextBooking = Optional.empty();
-            //BookingToItemDto lastBookingToItemDto = BookingMapper.toBookingToItemDto(lastBooking.get());
-            //BookingToItemDto nextBookingToItemDto = BookingMapper.toBookingToItemDto(nextBooking.get());
             Long itemId = itemO.get().getId();
-            //List<Comment> com = commentRepository.findAllByItemId(itemId);
             List<Comment> comments = commentRepository.findAll();
             List<Comment> comment = new ArrayList<>();
             if (!comments.isEmpty()) {
@@ -138,36 +134,28 @@ public class ItemServiceImpl implements ItemService {
                         itemO.get(),
                         null,
                         null,
-                        //comment
                         CommentMapper.toCommentsFullDto(comment)
                 );
             } else if (lastBooking.isEmpty()) {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
                         null,
-                        //nextBooking.get(),
                         BookingMapper.toBookingToItemDto(nextBooking.get()),
                         CommentMapper.toCommentsFullDto(comment)
-                        //comment
                 );
             } else if (nextBooking.isEmpty()) {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
-                        //lastBooking.get(),
                         BookingMapper.toBookingToItemDto(lastBooking.get()),
                         null,
                         CommentMapper.toCommentsFullDto(comment)
-                        //comment
                 );
             } else {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
-                        //lastBooking.get(),
-                        //nextBooking.get(),
                         BookingMapper.toBookingToItemDto(lastBooking.get()),
                         BookingMapper.toBookingToItemDto(nextBooking.get()),
                         CommentMapper.toCommentsFullDto(comment)
-                        //comment
                 );
             }
         }
@@ -192,8 +180,6 @@ public class ItemServiceImpl implements ItemService {
                 List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(item.getId());
                 Optional<Booking> lastBooking = Optional.empty();
                 Optional<Booking> nextBooking = Optional.empty();
-                //BookingToItemDto lastBookingToItemDto = BookingMapper.toBookingToItemDto(lastBooking.get());
-                //BookingToItemDto nextBookingToItemDto = BookingMapper.toBookingToItemDto(nextBooking.get());
                 List<Comment> comments = commentRepository.findAll();
                 List<Comment> comment = new ArrayList<>();
                 if (!comments.isEmpty()) {
@@ -225,35 +211,27 @@ public class ItemServiceImpl implements ItemService {
                             null,
                             null,
                             CommentMapper.toCommentsFullDto(comment)
-                            //comment
                     ));
                 } else if (lastBooking.isEmpty()) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
                             null,
-                            //nextBooking.get(),
                             BookingMapper.toBookingToItemDto(nextBooking.get()),
                             CommentMapper.toCommentsFullDto(comment)
-                            //comment
                     ));
                 } else if (nextBooking.isEmpty()) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
-                            //lastBooking.get(),
                             BookingMapper.toBookingToItemDto(nextBooking.get()),
                             null,
                             CommentMapper.toCommentsFullDto(comment)
-                            //comment
                     ));
                 } else {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
-                            //lastBooking.get(),
-                            //nextBooking.get(),
                             BookingMapper.toBookingToItemDto(lastBooking.get()),
                             BookingMapper.toBookingToItemDto(nextBooking.get()),
                             CommentMapper.toCommentsFullDto(comment)
-                            //comment
                     ));
                 }
             }
@@ -291,14 +269,6 @@ public class ItemServiceImpl implements ItemService {
             if ((booking.getItem().getId().equals(itemId)) &&
                     (!booking.getStatus().equals(BookingStatus.REJECTED)) &&
                     (booking.getEnd().isBefore(createdTime))) {
-                /*Comment comment = CommentMapper.fromCommentDto(
-                        commentSto,
-                        itemRepository.findById(itemId).get(),
-                        userRepository.findById(userId).get(),
-                        LocalDateTime.now()
-                );
-                Comment savedComment = commentRepository.save(comment);
-                return CommentMapper.toCommentFullDto(savedComment);*/
                 return CommentMapper.toCommentFullDto(commentRepository.save(
                         CommentMapper.fromCommentDto(
                                 commentSto,

@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 
-import java.awt.print.Book;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -112,8 +111,6 @@ public class BookingServiceImpl implements BookingService{
         List<Item> items = itemRepository.findAll();
         List<Booking> bookingsByUser = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
         List<Booking> sortedBookings = sortedByState(bookingsByUser, state, LocalDateTime.now());
-        //Set<Booking> reverseSortedBookings = new HashSet<>(sortedBookings);
-        //List<Booking> toReturn = new ArrayList<>(reverseSortedBookings);
         return BookingMapper.foBookingsFullDto(sortedBookings);
     }
 
@@ -152,8 +149,7 @@ public class BookingServiceImpl implements BookingService{
         } else if (state.equals(BookingState.CURRENT)) {
             for (Booking booking : bookings) {
                 if ((booking.getEnd().isAfter(time)) &&
-                        (booking.getStart().isBefore(time))/* &&
-                        (!booking.getStatus().equals(BookingStatus.REJECTED))*/) {
+                        (booking.getStart().isBefore(time))) {
                     sortedBooking.add(booking);
                 }
             }

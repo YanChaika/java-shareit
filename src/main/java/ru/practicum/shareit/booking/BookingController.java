@@ -44,16 +44,12 @@ public class BookingController {
     private BookingState setStatus(String state) {
         switch(state) {
             case "ALL":
-                //return BookingStatus.ALL;
                 return BookingState.ALL;
             case "CURRENT":
-                //return BookingStatus.CURRENT;
                 return BookingState.CURRENT;
             case "PAST":
-                //return BookingStatus.PAST;
                 return BookingState.PAST;
             case "FUTURE":
-                //return BookingStatus.FUTURE;
                 return BookingState.FUTURE;
             case "WAITING":
                 return BookingState.WAITING;
