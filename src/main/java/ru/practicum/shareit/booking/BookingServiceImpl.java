@@ -22,7 +22,7 @@ import java.util.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
@@ -37,8 +37,8 @@ public class BookingServiceImpl implements BookingService{
                 || bookingDto.getEnd().isBefore(instant)
                 || bookingDto.getEnd().isBefore(bookingDto.getStart())
                 || bookingDto.getEnd().equals(bookingDto.getStart()))
-        {
-         throw new ValidationException("Время бронирования прошло");
+            {
+            throw new ValidationException("Время бронирования прошло");
         }
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь с id " + userId + " не найден")
