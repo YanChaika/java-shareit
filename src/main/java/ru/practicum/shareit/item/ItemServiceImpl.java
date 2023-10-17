@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             item = ItemMapper.fromItemUpdateDto(itemDto, itemO.orElseThrow().isAvailable(), userId, itemId);
         }
-        if (userId == itemO.orElseThrow().getOwnerId()) {
+        if (userId.equals(itemO.orElseThrow().getOwnerId())) {
             isValidateItem(item, itemO.orElseThrow());
         }
         return ItemMapper
