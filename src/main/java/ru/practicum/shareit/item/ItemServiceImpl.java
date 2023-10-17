@@ -129,7 +129,8 @@ public class ItemServiceImpl implements ItemService {
                     }
                 }
             }
-            if ((lastBooking.isEmpty()) && (nextBooking.isEmpty()) || (itemO.get().getOwnerId() != userId)) {
+            if ((lastBooking.isEmpty()) && (nextBooking.isEmpty()) ||
+                    (!itemO.get().getOwnerId().equals(userId))) {
                 return ItemMapper.toItemDtoWithBookingDates(
                         itemO.get(),
                         null,
@@ -176,7 +177,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> itemsToCheck = itemRepository.findAll();
         List<ItemDtoWithBookingDates> itemsByUser = new ArrayList<>();
         for (Item item : itemsToCheck) {
-            if (item.getOwnerId() == userId) {
+            if (item.getOwnerId().equals(userId)) {
                 List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(item.getId());
                 Optional<Booking> lastBooking = Optional.empty();
                 Optional<Booking> nextBooking = Optional.empty();
@@ -205,7 +206,8 @@ public class ItemServiceImpl implements ItemService {
                         }
                     }
                 }
-                if (((lastBooking.isEmpty()) && (nextBooking.isEmpty())) || (item.getOwnerId() != userId)) {
+                if (((lastBooking.isEmpty()) && (nextBooking.isEmpty())) ||
+                        (!item.getOwnerId().equals(userId))) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
                             null,
