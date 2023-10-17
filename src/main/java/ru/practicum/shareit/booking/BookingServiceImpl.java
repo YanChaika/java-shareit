@@ -36,8 +36,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDto.getStart().isBefore(instant)
                 || bookingDto.getEnd().isBefore(instant)
                 || bookingDto.getEnd().isBefore(bookingDto.getStart())
-                || bookingDto.getEnd().equals(bookingDto.getStart()))
-        {
+                || bookingDto.getEnd().equals(bookingDto.getStart())) {
             throw new ValidationException("Время бронирования прошло");
         }
         User user = userRepository.findById(userId).orElseThrow(
