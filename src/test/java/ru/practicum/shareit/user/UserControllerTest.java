@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class UserControllerTest {
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @InjectMocks
     private UserController userController;
