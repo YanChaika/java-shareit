@@ -12,7 +12,7 @@ import java.util.*;
 @Slf4j
 public class UserInMemoryStorage implements UserStorage {
 
-    private Map<Integer, User> users = new HashMap();
+    private Map<Long, User> users = new HashMap();
 
     @Override
     public List<User> getAll() {
@@ -43,7 +43,7 @@ public class UserInMemoryStorage implements UserStorage {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
@@ -56,8 +56,8 @@ public class UserInMemoryStorage implements UserStorage {
         if (users.isEmpty()) {
             throw new NotFoundException("Список пользователей пуст");
         }
-        for (Integer integer : users.keySet()) {
-            User userToCheck = users.get(integer);
+        for (Long aLong : users.keySet()) {
+            User userToCheck = users.get(aLong);
             if (userToCheck.getEmail().equals(email)) {
                 return userToCheck;
             }
@@ -66,7 +66,7 @@ public class UserInMemoryStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(Integer id) {
+    public User findUserById(Long id) {
         if (users.containsKey(id)) {
             return users.get(id);
         } else {

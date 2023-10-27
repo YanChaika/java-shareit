@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ItemInMemoryStorage implements ItemStorage {
 
-    private Map<Integer, Item> items = new HashMap();
+    private Map<Long, Item> items = new HashMap();
 
     @Override
     public Item create(Item item) {
@@ -26,7 +26,7 @@ public class ItemInMemoryStorage implements ItemStorage {
     }
 
     @Override
-    public Item findItemById(int id) {
+    public Item findItemById(Long id) {
         log.info("Поиск вещи");
         if (items.containsKey(id)) {
             return items.get(id);

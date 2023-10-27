@@ -1,13 +1,14 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-@Component
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserMapper {
 
-    public UserDto toUserDto(User user) {
+    public static UserDto toUserDto(User user) {
         return new UserDto(
                 user.getId(),
                 user.getName(),
@@ -15,11 +16,19 @@ public class UserMapper {
         );
     }
 
-    public User fromUserDto(UserDto user) {
+    public static User fromUserDto(UserDto user) {
         return new User(
                 user.getId(),
                 user.getName(),
                 user.getEmail()
         );
+    }
+
+    public static List<UserDto> mapToItemDto(Iterable<User> users) {
+        List<UserDto> dtos = new ArrayList<>();
+        for (User user : users) {
+            dtos.add(toUserDto(user));
+        }
+        return dtos;
     }
 }
