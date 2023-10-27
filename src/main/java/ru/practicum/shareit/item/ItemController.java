@@ -35,13 +35,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoWithBookingDates> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getAllByUserId(userId);
+    public List<ItemDtoWithBookingDates> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                            @RequestParam(required = false) Long from,
+                                                            @RequestParam(required = false) Long size) {
+        return itemService.getAllByUserId(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItemByText(@RequestParam(required = false) String text) {
-        return itemService.search(text);
+    public List<ItemDto> getItemByText(@RequestParam(required = false) String text,
+                                       @RequestParam(required = false) Long from,
+                                       @RequestParam(required = false) Long size) {
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

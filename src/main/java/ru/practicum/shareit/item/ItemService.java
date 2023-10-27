@@ -20,10 +20,10 @@ public interface ItemService {
     List<ItemDto> getAll();
 
     @Transactional
-    List<ItemDtoWithBookingDates> getAllByUserId(Long id);
+    List<ItemDtoWithBookingDates> getAllByUserId(Long id, Long from, Long size);
 
     @Transactional
-    List<ItemDto> search(String text);
+    List<ItemDto> search(String text, Long from, Long size);
 
     @Transactional
     CommentFullDto createComment(CommentDto comment, Long itemId, Long userId);

@@ -22,7 +22,7 @@ public class ItemDtoWithBookingDates {
     @AssertTrue
     private boolean available;
     private Long owner;
-    private Integer request;
+    private Long requestId;
     private BookingToItemDto lastBooking;
     private BookingToItemDto nextBooking;
     private List<CommentFullDto> comments;

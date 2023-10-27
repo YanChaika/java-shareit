@@ -33,7 +33,6 @@ public class ItemInMemoryStorage implements ItemStorage {
         } else {
             throw new NotFoundException("Вещь с id " + id + " не найденa");
         }
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
@@ -18,8 +19,8 @@ public class UserController {
     private final UserServiceImpl userService;
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
-        return userService.getAll();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAll());
     }
 
     @GetMapping("/{userId}")

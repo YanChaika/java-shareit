@@ -51,7 +51,7 @@ public class BookingMapper {
         return bookingFullDto;
     }
 
-    public static List<BookingFullDto> foBookingsFullDto(List<Booking> bookings) {
+    public static List<BookingFullDto> toBookingsFullDto(List<Booking> bookings) {
         List<BookingFullDto> bookingsFullDto = new ArrayList<>();
         for (Booking booking : bookings) {
             bookingsFullDto.add(BookingMapper.toBookingFullDto(booking, booking.getBooker(), booking.getItem()));

@@ -6,7 +6,9 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingDates;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemMapper {
@@ -18,7 +20,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.isAvailable(),
                 item.getOwnerId(),
-                item.getRequestId() != null ? item.getRequestId().getId() : null
+                item.getRequest() != null ? item.getRequest().getId() : null
         );
     }
 
@@ -30,21 +32,21 @@ public class ItemMapper {
                 item.getDescription(),
                 item.isAvailable(),
                 item.getOwnerId(),
-                item.getRequestId() != null ? item.getRequestId().getId() : null,
+                item.getRequest() != null ? item.getRequest().getId() : null,
                 lastBooking,
                 nextBooking,
                 comment
         );
     }
 
-    public static Item fromItemDto(ItemDto itemDto, boolean available, Long ownerId) {
+    public static Item fromItemDto(ItemDto itemDto, boolean available, Long ownerId, ItemRequest itemRequest) {
         return new Item(
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 available,
                 ownerId,
-                null
+                itemRequest
         );
     }
 
@@ -57,5 +59,13 @@ public class ItemMapper {
                 ownerId,
                 null
         );
+    }
+
+    public static List<ItemDto> toItemsDto(List<Item> items) {
+        List<ItemDto> itemsDto = new ArrayList<>();
+        for (Item item : items) {
+            itemsDto.add(toFullItemDto(item));
+        }
+        return itemsDto;
     }
 }
