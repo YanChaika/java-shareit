@@ -32,7 +32,6 @@ public class ItemRequestController {
     public List<ItemRequestFullDto> findAllRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                 @RequestParam(required = false) Long from,
                                                 @RequestParam(required = false) Long size) {
-        
         return requestService.findAllRequestsByOtherUsers(userId, from, size);
     }
 
