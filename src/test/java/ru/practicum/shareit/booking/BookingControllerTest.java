@@ -50,6 +50,7 @@ class BookingControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBooking, response.getBody());
     }
+
     @Test
     void getBookingById_whenInvoked_thenResponseStatusOkWithBookingDtoCollectionBody() {
         long userId = 0L;
@@ -91,6 +92,7 @@ class BookingControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBookingFullDto, response.getBody());
     }
+
     @Test
     void getAll_whenInvoked_thenResponseStatusOkWithBookingDtoCollectionBody() {
         long userId = 0L;
