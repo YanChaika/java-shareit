@@ -29,15 +29,15 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequestFullDto> findAllRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<List<ItemRequestFullDto>> findAllRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                 @RequestParam(required = false) Long from,
                                                 @RequestParam(required = false) Long size) {
-        return requestService.findAllRequestsByOtherUsers(userId, from, size);
+        return ResponseEntity.ok(requestService.findAllRequestsByOtherUsers(userId, from, size));
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestFullDto findById(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<ItemRequestFullDto> findById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @PathVariable Long requestId) {
-        return requestService.findById(userId, requestId);
+        return ResponseEntity.ok(requestService.findById(userId, requestId));
     }
 }

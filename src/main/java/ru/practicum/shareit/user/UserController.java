@@ -24,19 +24,19 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Long userId) {
-        return userService.getUserByIdOrThrow(userId);
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserByIdOrThrow(userId));
     }
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        return userService.create(userDto);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.create(userDto));
     }
 
     @PatchMapping("/{userId}")
-    public UserDto putUser(@RequestBody UserUpdateDto userUpdateDto,
+    public ResponseEntity<UserDto> putUser(@RequestBody UserUpdateDto userUpdateDto,
                            @PathVariable @Positive Long userId) {
-        return userService.update(userUpdateDto, userId);
+        return ResponseEntity.ok(userService.update(userUpdateDto, userId));
     }
 
     @DeleteMapping("/{userId}")

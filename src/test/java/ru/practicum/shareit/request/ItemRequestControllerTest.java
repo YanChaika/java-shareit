@@ -89,4 +89,32 @@ public class ItemRequestControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedItemRequests, response.getBody());
     }
+
+    @Test
+    void findAllRequestsByUserId_whenInvoked_thenReturnStatusOkWithItemRequestCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        List<ItemRequestFullDto> expectedItemRequests = List.of(new ItemRequestFullDto());
+        when(requestService.findAllRequestsByOtherUsers(userId, from, size)).thenReturn(expectedItemRequests);
+
+        ResponseEntity<List<ItemRequestFullDto>> response = controller.findAllRequestsByUserId(userId, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedItemRequests, response.getBody());
+    }
+
+    @Test
+    void findById_whenInvoked_thenReturnStatusOkWithItemRequestBody() {
+        long userId = 0L;
+        long requestId = 0l;
+        ItemRequestFullDto expectedItemRequest = new ItemRequestFullDto();
+        when(requestService.findById(userId, requestId)).thenReturn(expectedItemRequest);
+
+        ResponseEntity<ItemRequestFullDto> response = controller.findById(userId, requestId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedItemRequest, response.getBody());
+    }
+
 }
