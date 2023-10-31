@@ -107,7 +107,7 @@ public class ItemRequestControllerTest {
     @Test
     void findById_whenInvoked_thenReturnStatusOkWithItemRequestBody() {
         long userId = 0L;
-        long requestId = 0l;
+        long requestId = 0L;
         ItemRequestFullDto expectedItemRequest = new ItemRequestFullDto();
         when(requestService.findById(userId, requestId)).thenReturn(expectedItemRequest);
 

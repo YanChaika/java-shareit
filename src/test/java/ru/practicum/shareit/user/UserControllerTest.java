@@ -61,7 +61,7 @@ public class UserControllerTest {
 
     @Test
     void putUser_whenInvoked_thenResponseStatusOkWithUsersDtoBody() {
-        long userId = 0l;
+        long userId = 0L;
         UserDto expectedUser = new UserDto();
         UserUpdateDto userUpdateDto = new UserUpdateDto();
         when(userService.update(userUpdateDto, userId)).thenReturn(expectedUser);
