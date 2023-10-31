@@ -34,9 +34,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingFullDto create(BookingDto bookingDto, Long userId) {
         log.info("Добавление бронирования");
         LocalDateTime instant = LocalDateTime.now();
-        if (bookingDto.getStart().isBefore(instant)
+        if (/*bookingDto.getStart().isBefore(instant)
                 || bookingDto.getEnd().isBefore(instant)
-                || bookingDto.getEnd().isBefore(bookingDto.getStart())
+                || */bookingDto.getEnd().isBefore(bookingDto.getStart())
                 || bookingDto.getEnd().equals(bookingDto.getStart())) {
             throw new ValidationException("Время бронирования прошло");
         }
@@ -141,7 +141,41 @@ public class BookingServiceImpl implements BookingService {
 
     private List<Booking> sortedByState(List<Booking> bookings, BookingState state, LocalDateTime time) {
         List<Booking> sortedBooking = new ArrayList<>();
-        if (state.equals(BookingState.ALL)) {
+        switch (state) {
+            case ALL:
+                return bookings;
+            case FUTURE:
+                for (Booking booking : bookings) {
+                    if ((booking.getStart().isAfter(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
+                        sortedBooking.add(booking);
+                    }
+                }
+                return sortedBooking;
+            case PAST:
+                for (Booking booking : bookings) {
+                    if ((booking.getEnd().isBefore(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
+                        sortedBooking.add(booking);
+                    }
+                }
+                return sortedBooking;
+            case CURRENT:
+                for (Booking booking : bookings) {
+                    if ((booking.getEnd().isAfter(time)) &&
+                            (booking.getStart().isBefore(time))) {
+                        sortedBooking.add(booking);
+                    }
+                }
+                return sortedBooking;
+            default:
+                for (Booking booking : bookings) {
+                    if (booking.getStatus().toString().equals(state.toString())) {
+                        sortedBooking.add(booking);
+                    }
+                }
+                return sortedBooking;
+        }
+
+        /*if (state.equals(BookingState.ALL)) {
             return bookings;
         } else if (state.equals(BookingState.FUTURE)) {
             for (Booking booking : bookings) {
@@ -172,7 +206,7 @@ public class BookingServiceImpl implements BookingService {
                 }
             }
             return sortedBooking;
-        }
+        }*/
     }
 
     @Override

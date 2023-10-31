@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestFullDto;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class RequestMapper {
 
     static ItemRequest fromItemRequestDto(ItemRequestDto itemRequestDto, Long userId, LocalDateTime time) {

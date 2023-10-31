@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingFullDto;
@@ -38,28 +39,9 @@ public class BookingController {
     @GetMapping(params = "state")
     public List<BookingFullDto> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
                                            @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getByUserIdAndState(userId, setStatus(state));
-    }
-
-    private BookingState setStatus(String state) {
-        switch (state) {
-            case "ALL":
-                return BookingState.ALL;
-            case "CURRENT":
-                return BookingState.CURRENT;
-            case "PAST":
-                return BookingState.PAST;
-            case "FUTURE":
-                return BookingState.FUTURE;
-            case "WAITING":
-                return BookingState.WAITING;
-            case "REJECTED":
-                return BookingState.REJECTED;
-            case "APPROVED":
-                return BookingState.APPROVED;
-            default:
-                throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
-        }
+        return bookingService.getByUserIdAndState(userId, BookingState.from(state).orElseThrow(
+                () -> new ValidationException("Unknown state: UNSUPPORTED_STATUS")
+        ));
     }
 
     @GetMapping("/owner")
@@ -68,17 +50,21 @@ public class BookingController {
                                                   @RequestParam(required = false) Long from,
                                                   @RequestParam(required = false) Long size) {
         if (state != null) {
-            setStatus(state);
+            BookingState.from(state).orElseThrow(
+                    () -> new ValidationException("Unknown state: UNSUPPORTED_STATUS")
+            );
         } else {
-            return bookingService.getAllBookingByItemsForUserId(userId, setStatus("ALL"), from, size);
+            return bookingService.getAllBookingByItemsForUserId(userId, BookingState.ALL, from, size);
         }
-        return bookingService.getAllBookingByItemsForUserId(userId, setStatus(state), from, size);
+        return bookingService.getAllBookingByItemsForUserId(userId, BookingState.from(state).orElseThrow(
+                () -> new ValidationException("Unknown state: UNSUPPORTED_STATUS")
+        ), from, size);
     }
 
     @GetMapping
-    public List<BookingFullDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                       @RequestParam(required = false) Long from,
-                                       @RequestParam(required = false) Long size) {
-        return bookingService.getAllByUserId(userId, from, size);
+    public ResponseEntity<List<BookingFullDto>> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                 @RequestParam(required = false) Long from,
+                                                 @RequestParam(required = false) Long size) {
+        return ResponseEntity.ok(bookingService.getAllByUserId(userId, from, size));
     }
 }

@@ -1,7 +1,6 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.booking.dto;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
@@ -13,23 +12,17 @@ import javax.validation.ValidatorFactory;
 
 @JsonTest
 @ContextConfiguration(classes = LocalValidatorFactoryBean.class)
-class UserDtoTest {
+class BookingDtoTest {
 
     @Autowired
-    private JacksonTester<UserDto> jacksonTester;
-    private UserDto userDto;
+    private JacksonTester<BookingDto> jacksonTester;
+    private BookingDto bookingDto;
 
     @Autowired
     private ValidatorFactory validatorFactory;
 
     @BeforeEach
-    void beforeEach() {
-        userDto = new UserDto(1L, "name", "email@email.com");
-    }
-
-    @Test
-    void testJsonUserDto() throws Exception {
-        JsonContent<UserDto> result = jacksonTester.write(userDto);
-
+    void beforeEach() throws Exception {
+        JsonContent<BookingDto> result = jacksonTester.write(bookingDto);
     }
 }

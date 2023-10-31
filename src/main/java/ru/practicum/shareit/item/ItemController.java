@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.*;
@@ -35,10 +36,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoWithBookingDates> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                            @RequestParam(required = false) Long from,
-                                                            @RequestParam(required = false) Long size) {
-        return itemService.getAllByUserId(userId, from, size);
+    public ResponseEntity<List<ItemDtoWithBookingDates>> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                                           @RequestParam(required = false) Long from,
+                                                                           @RequestParam(required = false) Long size) {
+        return ResponseEntity.ok(itemService.getAllByUserId(userId, from, size));
     }
 
     @GetMapping("/search")
