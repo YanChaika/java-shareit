@@ -8,9 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.booking.dto.BookingFullDto;
-import ru.practicum.shareit.user.dto.UserDto;
 
-import java.awt.print.Book;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

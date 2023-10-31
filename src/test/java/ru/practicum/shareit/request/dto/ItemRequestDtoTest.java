@@ -8,7 +8,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.ValidatorFactory;
 

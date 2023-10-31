@@ -8,8 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingDates;
-import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.UserServiceImpl;
 
 import java.util.List;
 

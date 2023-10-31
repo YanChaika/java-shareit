@@ -29,7 +29,6 @@ public enum BookingState {
                 return Optional.of(BookingState.APPROVED);
             default:
                 return Optional.empty();
-                //throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 

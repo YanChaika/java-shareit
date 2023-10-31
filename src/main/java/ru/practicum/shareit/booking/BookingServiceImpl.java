@@ -34,9 +34,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingFullDto create(BookingDto bookingDto, Long userId) {
         log.info("Добавление бронирования");
         LocalDateTime instant = LocalDateTime.now();
-        if (/*bookingDto.getStart().isBefore(instant)
-                || bookingDto.getEnd().isBefore(instant)
-                || */bookingDto.getEnd().isBefore(bookingDto.getStart())
+        if (bookingDto.getEnd().isBefore(bookingDto.getStart())
                 || bookingDto.getEnd().equals(bookingDto.getStart())) {
             throw new ValidationException("Время бронирования прошло");
         }
@@ -174,39 +172,6 @@ public class BookingServiceImpl implements BookingService {
                 }
                 return sortedBooking;
         }
-
-        /*if (state.equals(BookingState.ALL)) {
-            return bookings;
-        } else if (state.equals(BookingState.FUTURE)) {
-            for (Booking booking : bookings) {
-                if ((booking.getStart().isAfter(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
-                    sortedBooking.add(booking);
-                }
-            }
-            return sortedBooking;
-        } else if (state.equals(BookingState.PAST)) {
-            for (Booking booking : bookings) {
-                if ((booking.getEnd().isBefore(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
-                    sortedBooking.add(booking);
-                }
-            }
-            return sortedBooking;
-        } else if (state.equals(BookingState.CURRENT)) {
-            for (Booking booking : bookings) {
-                if ((booking.getEnd().isAfter(time)) &&
-                        (booking.getStart().isBefore(time))) {
-                    sortedBooking.add(booking);
-                }
-            }
-            return sortedBooking;
-        } else {
-            for (Booking booking : bookings) {
-                if (booking.getStatus().toString().equals(state.toString())) {
-                    sortedBooking.add(booking);
-                }
-            }
-            return sortedBooking;
-        }*/
     }
 
     @Override
