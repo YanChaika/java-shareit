@@ -41,6 +41,7 @@ class ItemRepositoryTest {
         requestRepository.save(itemRequest);
         itemRepository.save(item);
     }
+
     @Test
     void findItemsByQuery() {
         List<Item> actualItem = itemRepository.findItemsByQuery("desc");
