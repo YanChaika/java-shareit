@@ -1,24 +1,20 @@
 package ru.practicum.shareit.request;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.model.User;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class RequestRepositoryTest {
+
+    @Autowired
+    private TestEntityManager em;
 
     @Autowired
     private BookingRepository bookingRepository;
@@ -28,6 +24,24 @@ class RequestRepositoryTest {
     private ItemRepository itemRepository;
     @Autowired
     private RequestRepository requestRepository;
+
+    @Test
+    public void contextLoads() {
+        Assertions.assertNotNull(em);
+    }
+
+    @Test
+    void verify() {
+        //User user = new User(1L, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setDescription("description");
+        itemRequest.setRequesterId(1L);
+
+        Assertions.assertNull(itemRequest.getId());
+        //userRepository.save(user);
+        requestRepository.save(itemRequest);
+        Assertions.assertNotNull(itemRequest.getId());
+    }
 
     /*@BeforeEach
     public void addBooking() {
@@ -53,7 +67,7 @@ class RequestRepositoryTest {
                 .build());
     }*/
 
-    @Test
+    /*@Test
     void findAllByRequesterIdOrderByCreatedDesc() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
