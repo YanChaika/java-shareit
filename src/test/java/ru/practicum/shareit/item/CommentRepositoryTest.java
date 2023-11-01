@@ -30,7 +30,7 @@ class CommentRepositoryTest {
     private RequestRepository requestRepository;
 
     @BeforeEach
-    private void addComment() {
+    public void addComment() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
                 1L,
@@ -55,7 +55,7 @@ class CommentRepositoryTest {
     }
 
     @AfterEach
-    private void deleteComments() {
+    public void deleteComments() {
         commentRepository.deleteAll();
         itemRepository.deleteAll();
         requestRepository.deleteAll();

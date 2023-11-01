@@ -32,7 +32,7 @@ class RequestRepositoryTest {
     private RequestRepository requestRepository;
 
     @BeforeEach
-    private void addBooking() {
+    public void addBooking() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
                 1L,
@@ -63,7 +63,7 @@ class RequestRepositoryTest {
     }
 
     @AfterEach
-    private void deleteBookings() {
+    public void deleteBookings() {
         bookingRepository.deleteAll();
         itemRepository.deleteAll();
         requestRepository.deleteAll();

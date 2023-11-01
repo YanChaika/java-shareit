@@ -27,7 +27,7 @@ class ItemRepositoryTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    private void addItemRequest() {
+    public void addItemRequest() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
                 1L,
@@ -64,7 +64,7 @@ class ItemRepositoryTest {
     }
 
     @AfterEach
-    private void deleteItemRequests() {
+    public void deleteItemRequests() {
         itemRepository.deleteAll();
         requestRepository.deleteAll();
         userRepository.deleteAll();

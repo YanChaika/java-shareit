@@ -16,7 +16,7 @@ class UserRepositoryIT {
     private UserRepository userRepository;
 
     @BeforeEach
-    private void addUsers() {
+    public void addUsers() {
         userRepository.save(User.builder()
                 .id(1L)
                 .name("name")
@@ -32,7 +32,7 @@ class UserRepositoryIT {
     }
 
     @AfterEach
-    private void deleteUsers() {
+    public void deleteUsers() {
         userRepository.deleteAll();
     }
 }
