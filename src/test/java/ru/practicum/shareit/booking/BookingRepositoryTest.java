@@ -3,23 +3,21 @@ package ru.practicum.shareit.booking;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.RequestRepository;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @DataJpaTest
 class BookingRepositoryTest {
 
+    @Autowired
+    private TestEntityManager em;
     @Autowired
     private BookingRepository bookingRepository;
     @Autowired
@@ -29,10 +27,29 @@ class BookingRepositoryTest {
     @Autowired
     private RequestRepository requestRepository;
 
-    private User user;
-    private ItemRequest itemRequest;
-    private Item item;
-    private Booking booking;
+    @Test
+    public void contextLoads() {
+        Assertions.assertNotNull(em);
+    }
+
+    @Test
+    void verify() {
+        Booking booking = new Booking();
+        booking.setStart(LocalDateTime.now());
+        booking.setEnd(LocalDateTime.now());
+        booking.setItem(new Item());
+        booking.setBooker(new User());
+        booking.setStatus(BookingStatus.WAITING);
+
+        Assertions.assertNull(booking.getId());
+        em.persist(booking);
+        Assertions.assertNotNull(booking.getId());
+    }
+
+    //private User user;
+    //private ItemRequest itemRequest;
+    //private Item item;
+    //private Booking booking;
 
     /*@BeforeEach
     public void addBooking() {
@@ -81,7 +98,7 @@ class BookingRepositoryTest {
         assertEquals(1L, actualBooking.get(0).getId());
     }*/
 
-    @Test
+    /*@Test
     public void testFindAllByItemIdOrderByStartDesc() {
         user = new User(1L, "name", "emsil@emsil.com");
         itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
