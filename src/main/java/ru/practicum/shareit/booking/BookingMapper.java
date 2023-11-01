@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingMapper {
 
-    public static BookingDto toBookingDto(Booking booking) {
+    /*public static BookingDto toBookingDto(Booking booking) {
         BookingDto bookingDto = new BookingDto(
                 booking.getId(),
                 booking.getStart(),
@@ -25,7 +25,7 @@ public class BookingMapper {
                 booking.getStatus()
         );
         return bookingDto;
-    }
+    }*/
 
     public static Booking fromBookingDto(BookingDto bookingDto, User booker, Item item) {
         Booking booking = new Booking(
