@@ -34,7 +34,7 @@ class BookingRepositoryTest {
     private Item item;
     private Booking booking;
 
-    @BeforeEach
+    /*@BeforeEach
     public void addBooking() {
         user = new User(1L, "name", "emsil@emsil.com");
         itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
@@ -83,17 +83,43 @@ class BookingRepositoryTest {
 
     @Test
     public void testFindAllByItemIdOrderByStartDesc() {
+        user = new User(1L, "name", "emsil@emsil.com");
+        itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                user.getId(),
+                itemRequest);
+        userRepository.save(user);
+        requestRepository.save(itemRequest);
+        itemRepository.save(item);
+        requestRepository.save(itemRequest);
+        booking = new Booking(
+                1L,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                item,
+                user,
+                BookingStatus.WAITING);
+        bookingRepository.save(booking);
         Page<Booking> actualBooking = bookingRepository
                 .findAllByItemIdOrderByStartDesc(item.getId(), PageRequest.of(0, 1));
 
         assertEquals(1, actualBooking.get().count());
-    }
 
-    @AfterEach
-    public void deleteBookings() {
         userRepository.deleteAll();
         requestRepository.deleteAll();
         itemRepository.deleteAll();
         bookingRepository.deleteAll();
     }
+
+    /*@AfterEach
+    public void deleteBookings() {
+        userRepository.deleteAll();
+        requestRepository.deleteAll();
+        itemRepository.deleteAll();
+        bookingRepository.deleteAll();
+    }*/
 }

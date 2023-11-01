@@ -29,7 +29,7 @@ class CommentRepositoryTest {
     @Autowired
     private RequestRepository requestRepository;
 
-    @BeforeEach
+    /*@BeforeEach
     public void addComment() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
@@ -45,20 +45,39 @@ class CommentRepositoryTest {
         requestRepository.save(itemRequest);
         itemRepository.save(item);
         commentRepository.save(comment);
-    }
+    }*/
 
     @Test
     void findAllByItemId() {
+        ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                1L,
+                itemRequest);
+        User user = new User(1L, "name", "emsil@emsil.com");
+        Comment comment = new Comment(1L, "text", item, user, LocalDateTime.now());
+        userRepository.save(user);
+        requestRepository.save(itemRequest);
+        itemRepository.save(item);
+        commentRepository.save(comment);
         List<Comment> actualComments = commentRepository.findAllByItemId(1L);
 
         assertEquals(1L, actualComments.get(0).getId());
-    }
 
-    @AfterEach
-    public void deleteComments() {
         commentRepository.deleteAll();
         itemRepository.deleteAll();
         requestRepository.deleteAll();
         userRepository.deleteAll();
     }
+
+    /*@AfterEach
+    public void deleteComments() {
+        commentRepository.deleteAll();
+        itemRepository.deleteAll();
+        requestRepository.deleteAll();
+        userRepository.deleteAll();
+    }*/
 }

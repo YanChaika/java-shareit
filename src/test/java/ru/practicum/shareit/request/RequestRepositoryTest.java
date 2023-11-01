@@ -31,7 +31,7 @@ class RequestRepositoryTest {
     @Autowired
     private RequestRepository requestRepository;
 
-    @BeforeEach
+    /*@BeforeEach
     public void addBooking() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
@@ -53,20 +53,45 @@ class RequestRepositoryTest {
                 .booker(user)
                 .status(BookingStatus.WAITING)
                 .build());
-    }
+    }*/
 
     @Test
     void findAllByRequesterIdOrderByCreatedDesc() {
+        ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                1L,
+                itemRequest);
+        User user = new User(1L, "name", "emsil@emsil.com");
+        userRepository.save(user);
+        requestRepository.save(itemRequest);
+        itemRepository.save(item);
+        bookingRepository.save(Booking.builder()
+                .id(1L)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now())
+                .item(item)
+                .booker(user)
+                .status(BookingStatus.WAITING)
+                .build());
         List<ItemRequest> actualItemRequest = requestRepository.findAllByRequesterIdOrderByCreatedDesc(1L);
 
         assertEquals(1L, actualItemRequest.get(0).getId());
-    }
 
-    @AfterEach
-    public void deleteBookings() {
         bookingRepository.deleteAll();
         itemRepository.deleteAll();
         requestRepository.deleteAll();
         userRepository.deleteAll();
     }
+
+    /*@AfterEach
+    public void deleteBookings() {
+        bookingRepository.deleteAll();
+        itemRepository.deleteAll();
+        requestRepository.deleteAll();
+        userRepository.deleteAll();
+    }*/
 }
