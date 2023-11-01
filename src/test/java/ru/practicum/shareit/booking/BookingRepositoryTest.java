@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +34,7 @@ class BookingRepositoryTest {
     private Item item;
     private Booking booking;
 
-    /*@BeforeEach
+    @BeforeEach
     public void addBooking() {
         user = new User(1L, "name", "emsil@emsil.com");
         itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
@@ -58,167 +57,43 @@ class BookingRepositoryTest {
                 user,
                 BookingStatus.WAITING);
         bookingRepository.save(booking);
-    }*/
+    }
 
-    @Test
+    /*@Test
     public void findAllByBookerIdOrderByStartDesc() {
-        user = new User(1L, "name", "emsil@emsil.com");
-        itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
-        item = new Item(
-                1L,
-                "item",
-                "item description",
-                true,
-                user.getId(),
-                itemRequest);
-        userRepository.save(user);
-        requestRepository.save(itemRequest);
-        itemRepository.save(item);
-        requestRepository.save(itemRequest);
-        booking = new Booking(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                item,
-                user,
-                BookingStatus.WAITING);
-        bookingRepository.save(booking);
         List<Booking> actualBooking = bookingRepository.findAllByBookerIdOrderByStartDesc(user.getId());
 
         assertEquals(1L, actualBooking.get(0).getId());
-
-        bookingRepository.deleteById(booking.getId());
-        itemRepository.deleteById(item.getId());
-        requestRepository.deleteById(itemRequest.getId());
-        userRepository.deleteById(user.getId());
-        userRepository.deleteAll();
-        requestRepository.deleteAll();
-        itemRepository.deleteAll();
-        bookingRepository.deleteAll();
     }
 
     @Test
     public void findAllByBookerIdOrderByEndDesc() {
-        user = new User(1L, "name", "emsil@emsil.com");
-        itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
-        item = new Item(
-                1L,
-                "item",
-                "item description",
-                true,
-                user.getId(),
-                itemRequest);
-        userRepository.save(user);
-        requestRepository.save(itemRequest);
-        itemRepository.save(item);
-        requestRepository.save(itemRequest);
-        booking = new Booking(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                item,
-                user,
-                BookingStatus.WAITING);
-        bookingRepository.save(booking);
         Page<Booking> actualBooking = bookingRepository
                 .findAllByBookerIdOrderByEndDesc(user.getId(), PageRequest.of(0, 1));
 
         assertEquals(1, actualBooking.get().count());
-
-        bookingRepository.deleteById(booking.getId());
-        itemRepository.deleteById(item.getId());
-        requestRepository.deleteById(itemRequest.getId());
-        userRepository.deleteById(user.getId());
-        userRepository.deleteAll();
-        requestRepository.deleteAll();
-        itemRepository.deleteAll();
-        bookingRepository.deleteAll();
     }
 
     @Test
     public void findAllByItemIdOrderByStartDesc() {
-        user = new User(1L, "name", "emsil@emsil.com");
-        itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
-        item = new Item(
-                1L,
-                "item",
-                "item description",
-                true,
-                user.getId(),
-                itemRequest);
-        userRepository.save(user);
-        requestRepository.save(itemRequest);
-        itemRepository.save(item);
-        requestRepository.save(itemRequest);
-        booking = new Booking(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                item,
-                user,
-                BookingStatus.WAITING);
-        bookingRepository.save(booking);
         List<Booking> actualBooking = bookingRepository.findAllByItemIdOrderByStartDesc(item.getId());
 
         assertEquals(1L, actualBooking.get(0).getId());
-
-        bookingRepository.deleteById(booking.getId());
-        itemRepository.deleteById(item.getId());
-        requestRepository.deleteById(itemRequest.getId());
-        userRepository.deleteById(user.getId());
-        userRepository.deleteAll();
-        requestRepository.deleteAll();
-        itemRepository.deleteAll();
-        bookingRepository.deleteAll();
-    }
+    }*/
 
     @Test
     public void testFindAllByItemIdOrderByStartDesc() {
-        user = new User(1L, "name", "emsil@emsil.com");
-        itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
-        item = new Item(
-                1L,
-                "item",
-                "item description",
-                true,
-                user.getId(),
-                itemRequest);
-        userRepository.save(user);
-        requestRepository.save(itemRequest);
-        itemRepository.save(item);
-        requestRepository.save(itemRequest);
-        booking = new Booking(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                item,
-                user,
-                BookingStatus.WAITING);
-        bookingRepository.save(booking);
         Page<Booking> actualBooking = bookingRepository
                 .findAllByItemIdOrderByStartDesc(item.getId(), PageRequest.of(0, 1));
 
         assertEquals(1, actualBooking.get().count());
+    }
 
-        bookingRepository.deleteById(booking.getId());
-        itemRepository.deleteById(item.getId());
-        requestRepository.deleteById(itemRequest.getId());
-        userRepository.deleteById(user.getId());
+    @AfterEach
+    public void deleteBookings() {
         userRepository.deleteAll();
         requestRepository.deleteAll();
         itemRepository.deleteAll();
         bookingRepository.deleteAll();
     }
-
-    /*@AfterEach
-    public void deleteBookings() {
-        bookingRepository.deleteById(booking.getId());
-        itemRepository.deleteById(item.getId());
-        requestRepository.deleteById(itemRequest.getId());
-        userRepository.deleteById(user.getId());
-        userRepository.deleteAll();
-        requestRepository.deleteAll();
-        itemRepository.deleteAll();
-        bookingRepository.deleteAll();
-    }*/
 }

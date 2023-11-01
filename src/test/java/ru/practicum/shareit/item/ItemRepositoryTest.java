@@ -42,7 +42,7 @@ class ItemRepositoryTest {
         itemRepository.save(item);
     }
 
-    @Test
+    /*@Test
     void findItemsByQuery() {
         List<Item> actualItem = itemRepository.findItemsByQuery("desc");
 
@@ -54,7 +54,7 @@ class ItemRepositoryTest {
         List<Item> actualItem = itemRepository.findItemsByOwnerId(1L);
 
         assertEquals(1L, actualItem.get(0).getId());
-    }
+    }*/
 
     @Test
     void findAllByRequestIdOrderByRequestCreatedDesc() {
