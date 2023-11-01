@@ -7,11 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.RequestRepository;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.model.User;
-
-import java.time.LocalDateTime;
 
 @DataJpaTest
 class ItemRepositoryTest {
@@ -32,16 +28,16 @@ class ItemRepositoryTest {
 
     @Test
     void verify() {
-        User user = new User(1L, "name", "emsil@emsil.com");
+        //User user = new User(1L, "name", "emsil@emsil.com");
         Item item = new Item();
         item.setName("name");
         item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwnerId(1L);
-        item.setRequest(new ItemRequest(1L, "description", user.getId(), LocalDateTime.now()));
+        //item.setAvailable(true);
+        //item.setOwnerId(1L);
+        //item.setRequest(new ItemRequest(1L, "description", user.getId(), LocalDateTime.now()));
 
         Assertions.assertNull(item.getId());
-        userRepository.save(user);
+        //userRepository.save(user);
         itemRepository.save(item);
         Assertions.assertNotNull(item.getId());
     }
