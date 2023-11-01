@@ -46,6 +46,7 @@ class CommentRepositoryTest {
         itemRepository.save(item);
         commentRepository.save(comment);
     }
+
     @Test
     void findAllByItemId() {
         List<Comment> actualComments = commentRepository.findAllByItemId(1L);
