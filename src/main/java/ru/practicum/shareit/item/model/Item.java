@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
