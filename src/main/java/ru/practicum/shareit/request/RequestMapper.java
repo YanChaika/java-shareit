@@ -20,21 +20,6 @@ public class RequestMapper {
                 );
     }
 
-    static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
-        return new ItemRequestDto(
-                itemRequest.getId(),
-                itemRequest.getDescription()
-        );
-    }
-
-    /*static List<ItemRequestDto> toItemRequestsDto(List<ItemRequest> itemRequest) {
-        List<ItemRequestDto> itemRequestsDto = new ArrayList<>();
-        for (ItemRequest request : itemRequest) {
-            itemRequestsDto.add(toItemRequestDto(request));
-        }
-        return itemRequestsDto;
-    }*/
-
     static ItemRequestFullDto toItemRequestFullDto(ItemRequest itemRequest, List<ItemDto> items) {
         return new ItemRequestFullDto(
                 itemRequest.getId(),

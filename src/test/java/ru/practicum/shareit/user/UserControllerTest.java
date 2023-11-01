@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,12 +77,11 @@ public class UserControllerTest {
     void deleteUser_whenInvoked_thenResponseStatusOkWithUsersDtoBody() {
         long userId = 0L;
         UserDto expectedUsersDto = new UserDto(0L, "name", "email@email.com");
-        when(userService.create(expectedUsersDto)).thenReturn(expectedUsersDto);
         userService.deleteById(userId);
+        userController.deleteUser(expectedUsersDto.getId());
 
-        ResponseEntity<UserDto> response = userController.createUser(expectedUsersDto);
+        ResponseEntity<User> response = userController.getUserById(expectedUsersDto.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedUsersDto, response.getBody());
     }
 }
