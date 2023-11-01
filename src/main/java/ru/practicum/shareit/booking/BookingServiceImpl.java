@@ -124,8 +124,6 @@ public class BookingServiceImpl implements BookingService {
                 bookings.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(item.getId()));
             } else if (((from == 0) && (size == 0)) || (size <= 0)) {
                 throw new ValidationException("");
-            } else if (from == 0) {
-                return new ArrayList<>();
             } else {
                 bookings.addAll((bookingRepository.findAllByItemIdOrderByStartDesc(
                         item.getId(),
