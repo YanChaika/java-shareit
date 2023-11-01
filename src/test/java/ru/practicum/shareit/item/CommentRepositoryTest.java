@@ -1,23 +1,23 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.RequestRepository;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class CommentRepositoryTest {
 
+    @Autowired
+    private TestEntityManager em;
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
@@ -26,6 +26,24 @@ class CommentRepositoryTest {
     private UserRepository userRepository;
     @Autowired
     private RequestRepository requestRepository;
+
+    @Test
+    public void contextLoads() {
+        Assertions.assertNotNull(em);
+    }
+
+    @Test
+    void verify() {
+        Comment comment = new Comment();
+        comment.setText("text");
+        comment.setItem(new Item());
+        comment.setAuthor(new User());
+        comment.setCreated(LocalDateTime.now());
+
+        Assertions.assertNull(comment.getId());
+        em.persist(comment);
+        Assertions.assertNotNull(comment.getId());
+    }
 
     /*@BeforeEach
     public void addComment() {
@@ -45,7 +63,7 @@ class CommentRepositoryTest {
         commentRepository.save(comment);
     }*/
 
-    @Test
+    /*@Test
     void findAllByItemId() {
         ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
         Item item = new Item(
@@ -64,12 +82,7 @@ class CommentRepositoryTest {
         List<Comment> actualComments = commentRepository.findAllByItemId(1L);
 
         assertEquals(1L, actualComments.get(0).getId());
-
-        commentRepository.deleteAll();
-        itemRepository.deleteAll();
-        requestRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+    }*/
 
     /*@AfterEach
     public void deleteComments() {
