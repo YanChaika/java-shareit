@@ -150,6 +150,7 @@ class BookingServiceImplTest {
 
         assertEquals(List.of(bookingFullDto), actualBookings);
     }
+
     @Test
     void getAllBookingByItemsForUserId_whenFromAndSizeZero_thenReturnException() {
         long userId = 1L;
