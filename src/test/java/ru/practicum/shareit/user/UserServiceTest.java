@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -8,9 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,6 +84,101 @@ public class UserServiceTest {
 
         assertEquals("newName", savedUser.getName());
         assertEquals("newEmail@email.com", savedUser.getEmail());
+    }
+
+    @Test
+    void update_whenUserNotFound_thenUpdate() {
+        Long userId = 1L;
+        User oldUser = new User();
+        oldUser.setId(userId);
+        oldUser.setName("name");
+        oldUser.setEmail("email@email.com");
+
+        User newUser = new User();
+        newUser.setId(userId);
+        newUser.setName("newName");
+        newUser.setEmail("newEmail@email.com");
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> userService.update(UserMapper.toUserUpdateDto(newUser), userId));
+    }
+
+    @Test
+    void getAll_whenUserFound_thenUpdate() {
+        Long userId = 1L;
+        User oldUser = new User();
+        oldUser.setId(userId);
+        oldUser.setName("name");
+        oldUser.setEmail("email@email.com");
+
+        User newUser = new User();
+        newUser.setId(userId);
+        newUser.setName("newName");
+        newUser.setEmail("newEmail@email.com");
+        when(userRepository.findAll()).thenReturn(List.of(oldUser));
+
+        List<UserDto> actualUser = userService.getAll();
+
+        assertEquals(UserMapper.mapToItemDto(List.of(oldUser)), actualUser);
+    }
+
+    @Test
+    void create_whenUserFound_thenUpdate() {
+        Long userId = 1L;
+        User oldUser = new User();
+        oldUser.setId(userId);
+        oldUser.setName("name");
+        oldUser.setEmail("email@email.com");
+
+        UserDto newUser = new UserDto();
+        newUser.setId(userId);
+        newUser.setName("newName");
+        newUser.setEmail("newEmail@email.com");
+        when(userRepository.save(any(User.class))).thenReturn(oldUser);
+
+        UserDto actualUser = userService.create(newUser);
+
+        assertEquals(oldUser.getName(), actualUser.getName());
+    }
+
+    @Test
+    void create_whenUserNotFound_thenUpdate() {
+        Long userId = 1L;
+        User oldUser = new User();
+        oldUser.setId(userId);
+        oldUser.setName("name");
+        oldUser.setEmail("emailemail.com");
+        UserDto newUser = new UserDto();
+        newUser.setId(userId);
+        newUser.setName("newName");
+        newUser.setEmail("newEmailemail.com");
+
+        assertThrows(ValidationException.class, () -> userService.create(newUser));
+    }
+
+    @Test
+    void deleteById_whenUserFound_thenUpdate() {
+        Long userId = 1L;
+        User oldUser = new User();
+        oldUser.setId(userId);
+        oldUser.setName("name");
+        oldUser.setEmail("email@email.com");
+
+        userRepository.deleteById(userId);
+
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    @Test
+    void deleteById_whenUserNotFound_thenUpdate() {
+        Long userId = 1L;
+        User oldUser = new User();
+        oldUser.setId(userId);
+        oldUser.setName("name");
+        oldUser.setEmail("email@email.com");
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> userService.deleteById(oldUser.getId()));
     }
 
 }

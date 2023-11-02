@@ -254,6 +254,141 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void create_whenNotInvokedBookingTime_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = timeStart;
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                2L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+
+        assertThrows(ValidationException.class, () -> bookingService.create(bookingDto, userId));
+    }
+
+    @Test
+    void create_whenUserNotFound_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now();
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                2L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookingService.create(bookingDto, userId));
+    }
+
+    @Test
+    void create_whenItemNotFound_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now();
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                2L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookingService.create(bookingDto, userId));
+    }
+
+    @Test
+    void create_whenOwnerNotFound_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now();
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                true,
+                1L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+
+        assertThrows(NotFoundException.class, () -> bookingService.create(bookingDto, userId));
+    }
+
+    @Test
     void update_whenInvoked_thenReturnBooking() {
         long userId = 1L;
         Long from = 0L;
@@ -322,6 +457,77 @@ class BookingServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> bookingService.update("true", booking.getId(), userId));
     }
+
+    @Test
+    void update_whenNotInvokedWasApproved_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                false,
+                1L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.APPROVED);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        assertThrows(ValidationException.class, () -> bookingService.update("true", booking.getId(), userId));
+    }
+
+    @Test
+    void update_whenInvoked_thenReturnRejectedBooking() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                false,
+                1L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.REJECTED);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+        when(bookingRepository.save(booking)).thenReturn(booking);
+
+
+        BookingFullDto actualBookings = bookingService.update("false", booking.getId(), userId);
+
+        assertEquals(booking.getItem(), actualBookings.getItem());
+    }
+
 
     @Test
     void get_whenInvoked_thenReturnBooking() {
@@ -393,6 +599,71 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void get_whenNotInvokedBookingNotFound_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                false,
+                1L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(bookingRepository.findById(booking.getId())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookingService.get(userId, booking.getId()));;
+    }
+
+    @Test
+    void get_whenUserNotInvoked_thenReturnException() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        User user2 = new User(2L, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", 1L, LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                false,
+                2L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user2);
+        booking.setStatus(BookingStatus.WAITING);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        assertThrows(NotFoundException.class, () -> bookingService.get(userId, booking.getId()));;
+    }
+
+
+
+    @Test
     void getByUserIdAndState_whenInvoked_thenReturnBooking() {
         long userId = 1L;
         Long from = 0L;
@@ -427,5 +698,104 @@ class BookingServiceImplTest {
         List<BookingFullDto> actualBookings = bookingService.getByUserIdAndState(userId, BookingState.ALL);
 
         assertEquals(1, actualBookings.size());
+    }
+
+    @Test
+    void getByUserIdAndState_whenNotInvoked_thenReturnBooking() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now().plusDays(1L);
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(2L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                false,
+                1L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+        when(bookingRepository.findAllByBookerIdOrderByStartDesc(userId)).thenReturn(List.of(booking));
+
+        List<BookingFullDto> actualBookings = bookingService.getByUserIdAndState(userId, BookingState.FUTURE);
+
+        assertEquals(1, actualBookings.size());
+    }
+
+    @Test
+    void getByUserIdAndState_whenInvokedAndState_thenReturnBooking() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now().plusDays(1L);
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(2L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item(
+                1L,
+                "item",
+                "item description",
+                false,
+                1L,
+                itemRequest);
+        Booking booking = new Booking();
+        booking.setStart(timeStart);
+        booking.setEnd(timeEnd);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(1L);
+        bookingDto.setStart(timeStart);
+        bookingDto.setEnd(timeEnd);
+        Booking bookingWithId = booking;
+        bookingWithId.setId(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+        when(bookingRepository.findAllByBookerIdOrderByStartDesc(userId)).thenReturn(List.of(booking));
+
+        List<BookingFullDto> actualBookings = bookingService.getByUserIdAndState(userId, BookingState.WAITING);
+
+        assertEquals(1, actualBookings.size());
+    }
+
+    @Test
+    void getByUserIdAndState_whenUserNotFound_thenReturnException() {
+        long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookingService.getByUserIdAndState(userId, BookingState.ALL));
+    }
+
+    @Test
+    void getAllBookingByItemsForUserId_whenUserNotFound_thenReturnException() {
+        long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> bookingService.getAllBookingByItemsForUserId(userId, BookingState.ALL, 0L, 1L));
+    }
+
+    @Test
+    void update_whenUserNotFound_thenReturnException() {
+        long userId = 1L;
+
+        assertThrows(NotFoundException.class,
+                () -> bookingService.update("true", 1L, 1L));
     }
 }

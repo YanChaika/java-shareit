@@ -190,8 +190,8 @@ public class ItemServiceImpl implements ItemService {
             itemsToCheck = itemRepository.findAll();
         } else if (((from == 0) && (size == 0)) || (size <= 0)) {
             throw new ValidationException("");
-        } else if (from == 0) {
-            return new ArrayList<>();
+        //} else if (from == 0) {
+          //  return new ArrayList<>();
         } else {
             Page<Item> itemsByPage = itemRepository.findAll(PageRequest.of(from.intValue(), size.intValue()));
             itemsToCheck = itemsByPage.toList();

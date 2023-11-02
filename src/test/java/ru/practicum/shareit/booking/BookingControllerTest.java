@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingFullDto;
+import ru.practicum.shareit.exceptions.ValidationException;
 
 import java.util.List;
 
@@ -79,6 +80,13 @@ class BookingControllerTest {
     }
 
     @Test
+    void getBookingsByUser_whenNotInvoked_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        String state = "A";
+        assertThrows(ValidationException.class, () -> bookingController.getBookingsByUser(userId, state));
+    }
+
+    @Test
     void getBookingsByItem_whenInvoked_thenResponseStatusOkWithBookingDtoCollectionBody() {
         long userId = 0L;
         Long from = 1L;
@@ -91,6 +99,102 @@ class BookingControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBookingFullDto, response.getBody());
+    }
+
+    @Test
+    void getBookingsByItem_whenInvokedCurrent_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "CURRENT";
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenInvokedPast_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "PAST";
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenInvokedFuture_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "FUTURE";
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenInvokedWaiting_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "WAITING";
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenInvokedRejected_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "REJECTED";
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenInvokedApproved_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "APPROVED";
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenStateNull_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = null;
+        List<BookingFullDto> expectedBookingFullDto = List.of(new BookingFullDto());
+        when(bookingService.getAllBookingByItemsForUserId(userId,BookingState.ALL, from, size)).thenReturn(expectedBookingFullDto);
+
+        ResponseEntity<List<BookingFullDto>> response = bookingController.getBookingsByItem(userId, state, from, size);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBookingsByItem_whenNotInvoked_thenResponseStatusOkWithBookingDtoCollectionBody() {
+        long userId = 0L;
+        Long from = 1L;
+        Long size = 1L;
+        String state = "Al";
+
+        assertThrows(ValidationException.class, () -> bookingController.getBookingsByItem(userId, state, from, size));
     }
 
     @Test

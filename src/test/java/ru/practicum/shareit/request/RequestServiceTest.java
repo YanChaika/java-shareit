@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
@@ -20,10 +22,12 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -62,10 +66,49 @@ public class RequestServiceTest {
     }
 
     @Test
+    void findAllRequestsByOtherUsers_whenUserNotFound_thenReturnException() {
+        long ownerId = 0L;
+        Long from = 0L;
+        Long size = 0L;
+
+        assertThrows(NotFoundException.class, () -> requestService
+                .findAllRequestsByOtherUsers(ownerId, from, size));
+    }
+
+    @Test
+    void findAllRequestsByOtherUsers_whenNotFound_thenReturnException() {
+        long ownerId = 0L;
+        Long from = 0L;
+        Long size = 0L;
+        when(userRepository.findById(ownerId)).thenReturn(Optional.of(new User()));
+
+        assertThrows(ValidationException.class, () -> requestService
+                .findAllRequestsByOtherUsers(ownerId, from, size));
+    }
+
+    @Test
+    void findAllRequestsByOtherUsers_whenFromAndSizeNull_returnNewList() {
+        long ownerId = 0L;
+        Long from = 0L;
+        Long size = 1L;
+        LocalDateTime time = LocalDateTime.now();
+        ItemRequest itemRequest = new ItemRequest(ownerId, "description", 2L, time);
+        ItemRequestFullDto itemRequestFullDtoToCheck = RequestMapper
+                .toItemRequestFullDto(itemRequest, List.of(new ItemDto()));
+        when(userRepository.findById(ownerId)).thenReturn(Optional.of(new User()));
+
+        List<ItemRequestFullDto> actualItemRequestsFullDto = requestService
+                .findAllRequestsByOtherUsers(ownerId, null, null);
+
+        assertEquals(0, actualItemRequestsFullDto.size());
+    }
+
+    @Test
     void create_whenInvoked_thenReturnedItemRequest() {
         long userId = 1L;
+        LocalDateTime time = LocalDateTime.now();
         User user = new User(userId, "name", "emsil@emsil.com");
-        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), time);
         Item item = new Item();
         item.setId(1L);
         item.setName("item");
@@ -80,6 +123,10 @@ public class RequestServiceTest {
         itemDto.setOwner(1L);
         ItemRequestDto itemRequestDto = new ItemRequestDto();
         itemRequestDto.setDescription("description");
+        ItemRequestWithTimeDto itemRequestWithTimeDto = new ItemRequestWithTimeDto();
+        itemRequestWithTimeDto.setId(1L);
+        itemRequestWithTimeDto.setDescription("description");
+        itemRequestWithTimeDto.setCreated(time.toString());
         Booking booking = new Booking(
                 1L,
                 LocalDateTime.now(),
@@ -96,6 +143,11 @@ public class RequestServiceTest {
         ItemRequestWithTimeDto actualItem = requestService.create(itemRequestDto, userId);
 
         assertEquals(itemRequestDto.getDescription(), actualItem.getDescription());
+        assertEquals(1L, actualItem.getId());
+        assertEquals(itemRequest.getCreated().toString(), actualItem.getCreated());
+        assertEquals(itemRequestWithTimeDto, actualItem);
+        assertEquals(RequestMapper.toItemRequestWithTimeDto(itemRequest), actualItem);
+        assertEquals(RequestMapper.toItemRequestWithTimeDto(itemRequest), actualItem);
     }
 
     @Test
@@ -171,5 +223,42 @@ public class RequestServiceTest {
         ItemRequestFullDto actualItem = requestService.findById(userId, itemRequest.getId());
 
         assertEquals(itemRequest.getDescription(), actualItem.getDescription());
+    }
+
+    @Test
+    void findBuId_whenNotInvoked_thenReturnedItemRequest() {
+        long userId = 1L;
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwnerId(1L);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("item");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+        itemRequestDto.setDescription("description");
+        Booking booking = new Booking(
+                1L,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                item,
+                user,
+                BookingStatus.APPROVED);
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setCreated(LocalDateTime.now());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(requestRepository.findById(itemRequest.getId())).thenReturn(Optional.empty());
+
+        //ItemRequestFullDto actualItem = requestService.findById(userId, itemRequest.getId());
+        assertThrows(NotFoundException.class, () -> requestService.findById(userId, itemRequest.getId()));
+        //assertEquals(itemRequest.getDescription(), actualItem.getDescription());
     }
 }
