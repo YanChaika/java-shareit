@@ -6,13 +6,10 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingFullDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -67,10 +64,6 @@ public class RequestServiceTest {
     @Test
     void create_whenInvoked_thenReturnedItemRequest() {
         long userId = 1L;
-        Long from = 0L;
-        Long size = 1L;
-        LocalDateTime timeStart = LocalDateTime.now();
-        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
         User user = new User(userId, "name", "emsil@emsil.com");
         ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
         Item item = new Item();
@@ -94,7 +87,6 @@ public class RequestServiceTest {
                 item,
                 user,
                 BookingStatus.APPROVED);
-        BookingFullDto bookingFullDto = BookingMapper.toBookingFullDto(booking, user, item);
         Comment comment = new Comment();
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
@@ -109,10 +101,6 @@ public class RequestServiceTest {
     @Test
     void findAllMyRequests_whenInvoked_thenReturnedItemRequest() {
         long userId = 1L;
-        Long from = 0L;
-        Long size = 1L;
-        LocalDateTime timeStart = LocalDateTime.now();
-        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
         User user = new User(userId, "name", "emsil@emsil.com");
         ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
         Item item = new Item();
@@ -136,7 +124,6 @@ public class RequestServiceTest {
                 item,
                 user,
                 BookingStatus.APPROVED);
-        BookingFullDto bookingFullDto = BookingMapper.toBookingFullDto(booking, user, item);
         Comment comment = new Comment();
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
@@ -151,10 +138,6 @@ public class RequestServiceTest {
     @Test
     void findBuId_whenInvoked_thenReturnedItemRequest() {
         long userId = 1L;
-        Long from = 0L;
-        Long size = 1L;
-        LocalDateTime timeStart = LocalDateTime.now();
-        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
         User user = new User(userId, "name", "emsil@emsil.com");
         ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
         Item item = new Item();
@@ -178,7 +161,6 @@ public class RequestServiceTest {
                 item,
                 user,
                 BookingStatus.APPROVED);
-        BookingFullDto bookingFullDto = BookingMapper.toBookingFullDto(booking, user, item);
         Comment comment = new Comment();
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
