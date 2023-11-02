@@ -1,9 +1,7 @@
 package ru.practicum.shareit.request;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.request.dto.ItemRequestWithTimeDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -12,7 +10,6 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RequestMapperTest {

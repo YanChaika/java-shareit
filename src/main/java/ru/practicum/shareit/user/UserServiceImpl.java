@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
         } else {
-            throw new NotFoundException("Пользователь с Id " + id +" не найден");
+            throw new NotFoundException("Пользователь с Id " + id + " не найден");
         }
     }
 
