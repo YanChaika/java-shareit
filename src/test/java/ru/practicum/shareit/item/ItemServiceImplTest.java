@@ -10,11 +10,10 @@ import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingFullDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.CommentFullDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoWithBookingDates;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.RequestRepository;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
@@ -167,5 +166,205 @@ class ItemServiceImplTest {
         ItemDto actualItem = itemService.create(itemDto, userId);
 
         assertEquals(itemDto, actualItem);
+    }
+
+    @Test
+    void update_whenInvoked_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwnerId(1L);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("item");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        ItemUpdateDto itemUpdateDto = new ItemUpdateDto();
+        itemUpdateDto.setName("item");
+        itemUpdateDto.setDescription("description");
+        itemUpdateDto.setAvailable("true");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(itemRepository.saveAndFlush(any(Item.class))).thenReturn(item);
+
+        ItemDto actualItem = itemService.update(itemUpdateDto, userId, item.getId());
+
+        assertEquals(itemDto, actualItem);
+    }
+
+    @Test
+    void findItemById_whenInvoked_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwnerId(1L);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("item");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        ItemUpdateDto itemUpdateDto = new ItemUpdateDto();
+        itemUpdateDto.setName("itemDto");
+        itemUpdateDto.setDescription("description");
+        itemUpdateDto.setAvailable("true");
+        Booking booking = new Booking(
+                1L,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                item,
+                user,
+                BookingStatus.APPROVED);
+        BookingFullDto bookingFullDto = BookingMapper.toBookingFullDto(booking, user, item);
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setCreated(LocalDateTime.now());
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(bookingRepository.findAllByItemIdOrderByStartDesc(item.getId())).thenReturn(List.of(booking));
+        when(commentRepository.findAll()).thenReturn(List.of(comment));
+        when(commentRepository.findAllByItemId(item.getId())).thenReturn(List.of(comment));
+
+        ItemDtoWithBookingDates actualItem = itemService.findItemById(item.getId(), userId);
+
+        assertEquals(itemDto.getName(), actualItem.getName());
+    }
+
+    @Test
+    void getAll_whenInvoked_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwnerId(1L);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("item");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+
+        List<ItemDto> actualItem = itemService.getAll();
+
+        assertEquals(List.of(itemDto), actualItem);
+    }
+
+    @Test
+    void search_whenInvoked_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 1L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwnerId(1L);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("item");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        ItemUpdateDto itemUpdateDto = new ItemUpdateDto();
+        itemUpdateDto.setName("itemDto");
+        itemUpdateDto.setDescription("description");
+        itemUpdateDto.setAvailable("true");
+        Booking booking = new Booking(
+                1L,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                item,
+                user,
+                BookingStatus.APPROVED);
+        BookingFullDto bookingFullDto = BookingMapper.toBookingFullDto(booking, user, item);
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setCreated(LocalDateTime.now());
+        String query = "i";
+        when(itemRepository.findItemsByQuery(query)).thenReturn(List.of(item));
+
+        List<ItemDto> actualItem = itemService.search(query, from, size);
+
+        assertEquals(List.of(itemDto), actualItem);
+    }
+
+    @Test
+    void createComment_whenInvoked_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 1L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwnerId(1L);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("item");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        ItemUpdateDto itemUpdateDto = new ItemUpdateDto();
+        itemUpdateDto.setName("itemDto");
+        itemUpdateDto.setDescription("description");
+        itemUpdateDto.setAvailable("true");
+        Booking booking = new Booking(
+                1L,
+                LocalDateTime.now().minusDays(2),
+                LocalDateTime.now().minusDays(1),
+                item,
+                user,
+                BookingStatus.APPROVED);
+        BookingFullDto bookingFullDto = BookingMapper.toBookingFullDto(booking, user, item);
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setCreated(LocalDateTime.now());
+        comment.setText("text");
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("text");
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(bookingRepository.findAllByBookerIdOrderByStartDesc(userId)).thenReturn(List.of(booking));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+
+        CommentFullDto actualComment = itemService.createComment(commentDto, item.getId(), userId);
+
+        assertEquals(commentDto.getText(), actualComment.getText());
     }
 }

@@ -280,8 +280,6 @@ public class ItemServiceImpl implements ItemService {
             return checked;
         } else if (((from == 0) && (size == 0)) || (size <= 0)) {
             throw new ValidationException("");
-        } else if (from == 0) {
-            return new ArrayList<>();
         }
         return checked;
     }
