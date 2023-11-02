@@ -309,5 +309,4 @@ public class ItemServiceImpl implements ItemService {
         }
         throw new ValidationException("У вас не было подтвержденного бронирования вещи с id :" + itemId);
     }
-
 }
