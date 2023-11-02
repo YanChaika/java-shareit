@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentFullDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingDates;
@@ -109,6 +110,59 @@ class ItemServiceImplTest {
         itemDto.setAvailable(true);
         itemDto.setOwner(1L);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        ItemDto actualItem = itemService.create(itemDto, userId);
+
+        assertEquals(itemDto, actualItem);
+    }
+
+    @Test
+    void create_whenNotInvoked_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(null);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName("itemDto");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        itemDto.setRequestId(itemRequest.getId());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> itemService.create(itemDto, userId));
+    }
+
+    @Test
+    void create_whenInvokedAndGetRequest_thenReturnedItem() {
+        long userId = 1L;
+        Long from = 0L;
+        Long size = 0L;
+        LocalDateTime timeStart = LocalDateTime.now();
+        LocalDateTime timeEnd = LocalDateTime.now().plusDays(1L);
+        User user = new User(userId, "name", "emsil@emsil.com");
+        ItemRequest itemRequest = new ItemRequest(1L, "description", user.getId(), LocalDateTime.now());
+        Item item = new Item();
+        item.setId(null);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName("itemDto");
+        itemDto.setDescription("description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(1L);
+        itemDto.setRequestId(itemRequest.getId());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(requestRepository.findById(itemDto.getRequestId())).thenReturn(Optional.of(itemRequest));
 
         ItemDto actualItem = itemService.create(itemDto, userId);
 
