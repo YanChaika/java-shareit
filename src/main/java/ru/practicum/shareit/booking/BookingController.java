@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -47,8 +48,8 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<List<BookingFullDto>> getBookingsByItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                   @RequestParam(required = false) String state,
-                                                  @RequestParam(required = false) Long from,
-                                                  @RequestParam(required = false) Long size) {
+                                                  @RequestParam/*(required = false)*/(defaultValue = "null") Long from,
+                                                  @RequestParam/*(required = false)*/(defaultValue = "null") Long size) {
         if (state != null) {
             BookingState.from(state).orElseThrow(
                     () -> new ValidationException("Unknown state: UNSUPPORTED_STATUS")
@@ -66,8 +67,8 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<List<BookingFullDto>> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @RequestParam(required = false) Long from,
-                                                 @RequestParam(required = false) Long size) {
+                                                 @RequestParam(defaultValue = "null") Long from,
+                                                 @RequestParam(defaultValue = "null") Long size) {
         return ResponseEntity.ok(bookingService.getAllByUserId(userId, from, size));
     }
 }
