@@ -22,6 +22,6 @@ public class ItemDto {
     @AssertTrue
     private boolean available;
     private Long owner;
-    private Integer request;
+    private Long requestId;
 
 }

@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -13,6 +15,8 @@ import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.RequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -31,6 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     @Transactional
@@ -39,7 +44,13 @@ public class ItemServiceImpl implements ItemService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
-        Item item = ItemMapper.fromItemDto(itemDto, true, userId);
+        Item item;
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = requestRepository.findById(itemDto.getRequestId()).get();
+            item = ItemMapper.fromItemDto(itemDto, true, userId, request);
+        } else {
+            item = ItemMapper.fromItemDto(itemDto, true, userId, null);
+        }
         itemRepository.save(item);
         return ItemMapper.toFullItemDto(item);
     }
@@ -173,8 +184,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public List<ItemDtoWithBookingDates> getAllByUserId(Long userId) {
-        List<Item> itemsToCheck = itemRepository.findAll();
+    public List<ItemDtoWithBookingDates> getAllByUserId(Long userId, Long from, Long size) {
+        List<Item> itemsToCheck = new ArrayList<>();
+        if ((from == null) || (size == null)) {
+            itemsToCheck = itemRepository.findAll();
+        } else if (((from == 0) && (size == 0)) || (size <= 0)) {
+            throw new ValidationException("");
+        //} else if (from == 0) {
+          //  return new ArrayList<>();
+        } else {
+            Page<Item> itemsByPage = itemRepository.findAll(PageRequest.of(from.intValue(), size.intValue()));
+            itemsToCheck = itemsByPage.toList();
+        }
         List<ItemDtoWithBookingDates> itemsByUser = new ArrayList<>();
         for (Item item : itemsToCheck) {
             if (item.getOwnerId().equals(userId)) {
@@ -224,7 +245,7 @@ public class ItemServiceImpl implements ItemService {
                 } else if (nextBooking.isEmpty()) {
                     itemsByUser.add(ItemMapper.toItemDtoWithBookingDates(
                             item,
-                            BookingMapper.toBookingToItemDto(nextBooking.get()),
+                            BookingMapper.toBookingToItemDto(lastBooking.get()),
                             null,
                             CommentMapper.toCommentsFullDto(comment)
                     ));
@@ -238,20 +259,27 @@ public class ItemServiceImpl implements ItemService {
                 }
             }
         }
+
         return itemsByUser;
     }
 
     @Transactional
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, Long from, Long size) {
         log.info("Поиск вещи");
         List<ItemDto> checked = new ArrayList<>();
+
         if (!text.isBlank()) {
             for (Item item : itemRepository.findItemsByQuery(text)) {
                 if (item.isAvailable()) {
                     checked.add(ItemMapper.toFullItemDto(item));
                 }
             }
+        }
+        if ((from == null) || (size == null)) {
+            return checked;
+        } else if (((from == 0) && (size == 0)) || (size <= 0)) {
+            throw new ValidationException("");
         }
         return checked;
     }

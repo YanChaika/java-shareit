@@ -15,18 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingMapper {
 
-    public static BookingDto toBookingDto(Booking booking) {
-        BookingDto bookingDto = new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItem().getId(),
-                booking.getBooker().getId(),
-                booking.getStatus()
-        );
-        return bookingDto;
-    }
-
     public static Booking fromBookingDto(BookingDto bookingDto, User booker, Item item) {
         Booking booking = new Booking(
                 bookingDto.getId(),
@@ -51,7 +39,7 @@ public class BookingMapper {
         return bookingFullDto;
     }
 
-    public static List<BookingFullDto> foBookingsFullDto(List<Booking> bookings) {
+    public static List<BookingFullDto> toBookingsFullDto(List<Booking> bookings) {
         List<BookingFullDto> bookingsFullDto = new ArrayList<>();
         for (Booking booking : bookings) {
             bookingsFullDto.add(BookingMapper.toBookingFullDto(booking, booking.getBooker(), booking.getItem()));

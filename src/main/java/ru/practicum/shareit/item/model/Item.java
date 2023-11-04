@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,6 @@ public class Item {
     private Long ownerId;
     @ManyToOne(optional = false)
     @JoinColumn(name = "request_id", nullable = false)
-    private ItemRequest requestId;
+    private ItemRequest request;
 
 }

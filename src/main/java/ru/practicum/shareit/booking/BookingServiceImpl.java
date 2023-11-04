@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -33,9 +34,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingFullDto create(BookingDto bookingDto, Long userId) {
         log.info("Добавление бронирования");
         LocalDateTime instant = LocalDateTime.now();
-        if (bookingDto.getStart().isBefore(instant)
-                || bookingDto.getEnd().isBefore(instant)
-                || bookingDto.getEnd().isBefore(bookingDto.getStart())
+        if (bookingDto.getEnd().isBefore(bookingDto.getStart())
                 || bookingDto.getEnd().equals(bookingDto.getStart())) {
             throw new ValidationException("Время бронирования прошло");
         }
@@ -110,67 +109,89 @@ public class BookingServiceImpl implements BookingService {
         List<Item> items = itemRepository.findAll();
         List<Booking> bookingsByUser = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
         List<Booking> sortedBookings = sortedByState(bookingsByUser, state, LocalDateTime.now());
-        return BookingMapper.foBookingsFullDto(sortedBookings);
+        return BookingMapper.toBookingsFullDto(sortedBookings);
     }
 
     @Override
-    public List<BookingFullDto> getAllBookingByItemsForUserId(Long userId, BookingState state) {
+    public List<BookingFullDto> getAllBookingByItemsForUserId(Long userId, BookingState state, Long from, Long size) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("User с id " + userId + " не найден")
         );
         List<Item> items = itemRepository.findItemsByOwnerId(userId);
         List<Booking> bookings = new ArrayList<>();
         for (Item item : items) {
-            bookings.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(item.getId()));
+            if ((from == null) || (size == null)) {
+                bookings.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(item.getId()));
+            } else if (((from == 0) && (size == 0)) || (size <= 0)) {
+                throw new ValidationException("");
+            } else {
+                bookings.addAll((bookingRepository.findAllByItemIdOrderByStartDesc(
+                        item.getId(),
+                        PageRequest.of(from.intValue(), size.intValue()))).toList()
+                );
+            }
         }
         List<Booking> sortedBookings = sortedByState(bookings, state, LocalDateTime.now());
-        return BookingMapper.foBookingsFullDto(sortedBookings);
+        return BookingMapper.toBookingsFullDto(sortedBookings);
     }
 
     private List<Booking> sortedByState(List<Booking> bookings, BookingState state, LocalDateTime time) {
         List<Booking> sortedBooking = new ArrayList<>();
-        if (state.equals(BookingState.ALL)) {
-            return bookings;
-        } else if (state.equals(BookingState.FUTURE)) {
-            for (Booking booking : bookings) {
-                if ((booking.getStart().isAfter(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
-                    sortedBooking.add(booking);
+        switch (state) {
+            case ALL:
+                return bookings;
+            case FUTURE:
+                for (Booking booking : bookings) {
+                    if ((booking.getStart().isAfter(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
+                        sortedBooking.add(booking);
+                    }
                 }
-            }
-            return sortedBooking;
-        } else if (state.equals(BookingState.PAST)) {
-            for (Booking booking : bookings) {
-                if ((booking.getEnd().isBefore(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
-                    sortedBooking.add(booking);
+                return sortedBooking;
+            case PAST:
+                for (Booking booking : bookings) {
+                    if ((booking.getEnd().isBefore(time)) && (!booking.getStatus().equals(BookingStatus.REJECTED))) {
+                        sortedBooking.add(booking);
+                    }
                 }
-            }
-            return sortedBooking;
-        } else if (state.equals(BookingState.CURRENT)) {
-            for (Booking booking : bookings) {
-                if ((booking.getEnd().isAfter(time)) &&
-                        (booking.getStart().isBefore(time))) {
-                    sortedBooking.add(booking);
+                return sortedBooking;
+            case CURRENT:
+                for (Booking booking : bookings) {
+                    if ((booking.getEnd().isAfter(time)) &&
+                            (booking.getStart().isBefore(time))) {
+                        sortedBooking.add(booking);
+                    }
                 }
-            }
-            return sortedBooking;
-        } else {
-            for (Booking booking : bookings) {
-                if (booking.getStatus().toString().equals(state.toString())) {
-                    sortedBooking.add(booking);
+                return sortedBooking;
+            default:
+                for (Booking booking : bookings) {
+                    if (booking.getStatus().toString().equals(state.toString())) {
+                        sortedBooking.add(booking);
+                    }
                 }
-            }
-            return sortedBooking;
+                return sortedBooking;
         }
     }
 
     @Override
-    public List<BookingFullDto> getAllByUserId(Long userId) {
+    public List<BookingFullDto> getAllByUserId(Long userId, Long from, Long size) {
         log.info("Получение бронирования по user id");
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь с id " + userId + " не найден")
         );
         List<Item> items = itemRepository.findAll();
         List<Booking> bookingsByUser = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
-        return BookingMapper.foBookingsFullDto(bookingsByUser);
+        if ((from == null) || (size == null)) {
+            return BookingMapper.toBookingsFullDto(bookingsByUser);
+        } else if (((from == 0) && (size == 0)) || (size <= 0)) {
+            throw new ValidationException("");
+        }
+        if ((size + from) > bookingsByUser.size()) {
+            size = bookingsByUser.size() - from;
+        }
+        Pageable pageRequest = PageRequest.of(from.intValue(), size.intValue());
+        Page<Booking> bookingsByPage = bookingRepository.findAllByBookerIdOrderByEndDesc(userId, pageRequest);
+        List<Booking> bookingsConvertFromPage = bookingsByPage.toList();
+        List<BookingFullDto> toReturn = BookingMapper.toBookingsFullDto(bookingsConvertFromPage);
+        return toReturn;
     }
 }
