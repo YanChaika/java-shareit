@@ -10,6 +10,8 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping(path = "/items")
 @RequiredArgsConstructor
@@ -19,29 +21,29 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> getItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @PathVariable Long itemId) {
         log.info("Get item {}, userId={}", itemId, userId);
         return itemClient.getItem(userId, itemId);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createItem(@RequestBody ItemDto itemDto,
-                                             @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> createItem(@Valid @RequestBody ItemDto itemDto,
+                                             @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("Create item {}, userId={}", itemDto, userId);
         return itemClient.createItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestBody ItemUpdateDto itemDto,
-                                             @RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> updateItem(@Valid @RequestBody ItemUpdateDto itemDto,
+                                             @RequestHeader("X-Sharer-User-Id") long userId,
                                              @PathVariable Long itemId) {
         log.info("Update item {}, userId={}, itemId={}", itemDto, userId, itemId);
         return itemClient.updateItem(itemDto, userId, itemId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getItems(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
                                            @RequestParam(required = false) Long from,
                                            @RequestParam(required = false) Long size) {
         log.info("Get items {}, from={}, size={}", userId, from, size);
@@ -49,7 +51,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> getItemByText(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> getItemByText(@RequestHeader("X-Sharer-User-Id") long userId,
                                                 @RequestParam(required = false) String text,
                                                 @RequestParam(required = false) Long from,
                                                 @RequestParam(required = false) Long size) {
@@ -58,9 +60,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> createComment(@RequestHeader("X-Sharer-User-Id") long userId,
                                                 @PathVariable Long itemId,
-                                                @RequestBody CommentDto comment) {
+                                                @Valid @RequestBody CommentDto comment) {
         log.info("Create comment {}, userId={}, itemId={}", comment, userId, itemId);
         return itemClient.createComment(userId, itemId, comment);
     }

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Setter
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Builder
 public class Item {
     @Id
@@ -27,6 +27,7 @@ public class Item {
     private boolean isAvailable;
     @Column(name = "owner_id")
     private Long ownerId;
+    //@NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(optional = false)
     @JoinColumn(name = "request_id", nullable = false)
     private ItemRequest request;

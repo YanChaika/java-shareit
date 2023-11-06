@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -19,7 +18,7 @@ public class ItemDto {
     private String name;
     @NotNull
     private String description;
-    @AssertTrue
+    //@AssertTrue
     private Boolean available;
     private Long owner;
     private Long requestId;
