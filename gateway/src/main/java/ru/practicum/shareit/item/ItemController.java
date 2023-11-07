@@ -43,20 +43,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestParam(required = false) Long from,
-                                           @RequestParam(required = false) Long size) {
-        log.info("Get items {}, from={}, size={}", userId, from, size);
-        return itemClient.getItems(userId, from, size);
+    public ResponseEntity<Object> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Get items {}", userId);
+        return itemClient.getItems(userId);
     }
 
     @GetMapping("/search")
     public ResponseEntity<Object> getItemByText(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                @RequestParam(required = false) String text,
+                                                @RequestParam(required = false) String text/*,
                                                 @RequestParam(required = false) Long from,
-                                                @RequestParam(required = false) Long size) {
-        log.info("Get items by text {}, userId={} from={}, size={}", text, userId, from, size);
-        return itemClient.getItemByText(text, userId, from, size);
+                                                @RequestParam(required = false) Long size*/) {
+        //log.info("Get items by text {}, userId={} from={}, size={}", text, userId, from, size);
+        //return itemClient.getItemByText(text, userId, from, size);
+        log.info("Get items by text {}, userId={}", text, userId);
+        return itemClient.getItemByText(text, userId);
     }
 
     @PostMapping("/{itemId}/comment")

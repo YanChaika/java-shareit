@@ -52,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
         List<ItemRequest> itemRequests = requestRepository.findAllByRequesterIdOrderByCreatedDesc(ownerId);
         List<ItemRequestFullDto> itemRequestsFullDto = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequests) {
-            List<Item> items = itemRepository.findAllByRequestIdOrderByRequestCreatedDesc(itemRequest.getId());
+            List<Item> items = itemRepository.findAllByRequestIdOrderByRequestIdCreatedDesc(itemRequest.getId());
             if (items.isEmpty()) {
                 items = new ArrayList<>();
             }
@@ -79,7 +79,7 @@ public class RequestServiceImpl implements RequestService {
         List<ItemRequestFullDto> sortedRequest = new ArrayList<>();
         for (ItemRequest request : requests) {
             if (!request.getRequesterId().equals(ownerId)) {
-                List<Item> items = itemRepository.findAllByRequestIdOrderByRequestCreatedDesc(request.getId());
+                List<Item> items = itemRepository.findAllByRequestIdOrderByRequestIdCreatedDesc(request.getId());
                 List<ItemDto> itemsDto = ItemMapper.toItemsDto(items);
                 sortedRequest.add(RequestMapper.toItemRequestFullDto(request, itemsDto));
             }
@@ -94,7 +94,7 @@ public class RequestServiceImpl implements RequestService {
         if (itemRequest.isEmpty()) {
             throw new NotFoundException("Запрос с id " + requestId + "не найден");
         }
-        List<Item> items = itemRepository.findAllByRequestIdOrderByRequestCreatedDesc(itemRequest.get().getId());
+        List<Item> items = itemRepository.findAllByRequestIdOrderByRequestIdCreatedDesc(itemRequest.get().getId());
         List<ItemDto> itemsDto = ItemMapper.toItemsDto(items);
         return RequestMapper.toItemRequestFullDto(itemRequest.get(), itemsDto);
     }
