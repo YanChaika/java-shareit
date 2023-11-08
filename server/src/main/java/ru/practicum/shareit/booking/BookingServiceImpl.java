@@ -148,11 +148,11 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = new ArrayList<>();
         for (Item item : items) {
             if ((from == null) || (size == null)) {
-                bookings.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(item.getId()));
+                bookings.addAll(bookingRepository.findAllByItemIdOrderByIdDesc(item.getId()));
             } else if (((from == 0) && (size == 0)) || (size <= 0)) {
                 throw new ValidationException("");
             } else {
-                bookings.addAll((bookingRepository.findAllByItemIdOrderByStartDesc(
+                bookings.addAll((bookingRepository.findAllByItemIdOrderByIdDesc(
                         item.getId(),
                         PageRequest.of(from.intValue(), size.intValue()))).toList()
                 );
