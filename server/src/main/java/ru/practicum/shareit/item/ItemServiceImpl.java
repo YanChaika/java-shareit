@@ -260,7 +260,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
 
-        return itemsByUser;
+        return new ArrayList<>(itemsByUser);
     }
 
     @Transactional
