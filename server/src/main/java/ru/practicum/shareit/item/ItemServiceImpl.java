@@ -22,8 +22,10 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -259,8 +261,13 @@ public class ItemServiceImpl implements ItemService {
                 }
             }
         }
-
-        return new ArrayList<>(itemsByUser);
+        return itemsByUser.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(ArrayList::new), lst -> {
+                            Collections.reverse(lst);
+                            return lst.stream();
+                        }
+                )).collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Transactional
