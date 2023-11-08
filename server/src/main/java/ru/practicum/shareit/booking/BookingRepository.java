@@ -13,8 +13,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Page<Booking> findAllByBookerIdOrderByEndDesc(Long userId, Pageable pageable);
 
-    List<Booking> findAllByItemIdOrderByIdAsc(Long itemId);
+    List<Booking> findAllByItemIdOrderByIdDesc(Long itemId);
 
-    Page<Booking> findAllByItemIdOrderByIdAsc(Long itemId, Pageable pageable);
+    Page<Booking> findAllByItemIdOrderByIdDesc(Long itemId, Pageable pageable);
 
 }

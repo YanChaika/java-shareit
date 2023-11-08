@@ -106,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemO.isEmpty()) {
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         } else {
-            List<Booking> bookingsAllStatus = bookingRepository.findAllByItemIdOrderByIdAsc(id);
+            List<Booking> bookingsAllStatus = bookingRepository.findAllByItemIdOrderByIdDesc(id);
             List<Booking> bookings = new ArrayList<>();
             for (Booking allStatus : bookingsAllStatus) {
                 if (!allStatus.getStatus().equals(BookingStatus.REJECTED)) {
@@ -199,7 +199,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDtoWithBookingDates> itemsByUser = new ArrayList<>();
         for (Item item : itemsToCheck) {
             if (item.getOwnerId().equals(userId)) {
-                List<Booking> bookings = bookingRepository.findAllByItemIdOrderByIdAsc(item.getId());
+                List<Booking> bookings = bookingRepository.findAllByItemIdOrderByIdDesc(item.getId());
                 Optional<Booking> lastBooking = Optional.empty();
                 Optional<Booking> nextBooking = Optional.empty();
                 List<Comment> comments = commentRepository.findAll();
