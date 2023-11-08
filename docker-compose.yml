@@ -11,6 +11,9 @@ services:
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
       - TZ=Africa/Accra
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
 
   server:
     build: server
@@ -25,6 +28,9 @@ services:
       - SPRING_DATASOURCE_USERNAME=shareit
       - SPRING_DATASOURCE_PASSWORD=shareit
       - TZ=Africa/Accra
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
 
   db:
     image: postgres:13.7-alpine
@@ -36,3 +42,6 @@ services:
       - POSTGRES_USER=shareit
       - POSTGRES_DB=shareit
       - TZ=Africa/Accra
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
