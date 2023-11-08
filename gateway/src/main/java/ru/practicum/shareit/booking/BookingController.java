@@ -11,7 +11,6 @@ import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -47,10 +46,10 @@ public class BookingController {
 	@GetMapping
 	public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") long userId,
 			@RequestParam(name = "state", defaultValue = "all") String stateParam,
-			@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-			@Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+			@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Long from,
+			@Positive @RequestParam(name = "size", defaultValue = "10") Long size) {
 		BookingState state = BookingState.from(stateParam)
-				.orElseThrow(() -> new ValidationException("Unknown state: " + stateParam));
+				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
 		log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
 		return bookingClient.getBookings(userId, state, from, size);
 	}
@@ -58,10 +57,10 @@ public class BookingController {
 	@GetMapping("/owner")
 	public ResponseEntity<Object> getBookingsByItem(@RequestHeader("X-Sharer-User-Id") Long userId,
 												   @RequestParam(name = "state", defaultValue = "all") String stateParam,
-												   @RequestParam(required = false) Long from,
-												   @RequestParam(required = false) Long size) {
+													@PositiveOrZero @RequestParam(defaultValue = "0") Long from,
+													@Positive @RequestParam(defaultValue = "10") Long size) {
 		BookingState state = BookingState.from(stateParam)
-				.orElseThrow(() -> new ValidationException("Unknown state: " + stateParam));
+				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
 		log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
 		return bookingClient.getBookingsByItem(userId, state, from, size);
 	}

@@ -42,7 +42,7 @@ public class BookingClient extends BaseClient {
         return get("/" + bookingId, userId);
     }
 
-    public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
+    public ResponseEntity<Object> getBookings(long userId, BookingState state, Long from, Long size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
                 "from", from,
@@ -52,7 +52,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getBookingsByItem(Long userId, BookingState state, Long from, Long size) {
-        return get("/owner?rom={from}&size={size}", userId, Map.of(
+        return get("/owner?state={state}&from={from}&size={size}", userId, Map.of(
                 "state", state,
                 "from", from,
                 "size", size)

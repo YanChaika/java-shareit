@@ -35,7 +35,11 @@ public class RequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getRequestsByUserId(Long userId, Long from, Long size) {
-        return get("/all", userId, Map.of("from", from, "size", size));
+        return get("/all?from={from}&size={size}", userId, Map.of("from", from, "size", size));
+    }
+
+    public ResponseEntity<Object> getRequestsByUserIdWithoutPagination(Long userId) {
+        return get("/all", userId);
     }
 
     public ResponseEntity<Object> getRequest(long userId, Long requestId) {

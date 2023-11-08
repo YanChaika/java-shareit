@@ -115,6 +115,30 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingsFullDto(sortedBookings);
     }
 
+    @Transactional
+    @Override
+    public List<BookingFullDto> getByUserIdAndState(Long userId, BookingState state, Long from, Long size) {
+        log.info("Получение бронирования по id");
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("Пользователь с id " + userId + " не найден")
+        );
+        List<Item> items = itemRepository.findAll();
+        List<Booking> bookingsByUser = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+        List<Booking> sortedBookings = sortedByState(bookingsByUser, state, LocalDateTime.now());
+        if ((size + from) > sortedBookings.size()) {
+            size = sortedBookings.size() - from;
+        }
+        Pageable pageRequest = PageRequest.of(from.intValue(), size.intValue());
+        //Page<Booking> bookingsByPage = bookingRepository.findAllByBookerIdOrderByEndDesc(userId, pageRequest);
+        //List<Booking> bookingsConvertFromPage = bookingsByPage.toList();
+        List<Booking> bookingsConvertFromPage = new ArrayList<>();
+        for (int i = from.intValue(); i < (from + size); i++) {
+            bookingsConvertFromPage.add(sortedBookings.get(i));
+        }
+        List<BookingFullDto> toReturn = BookingMapper.toBookingsFullDto(bookingsConvertFromPage);
+        return toReturn;
+    }
+
     @Override
     public List<BookingFullDto> getAllBookingByItemsForUserId(Long userId, BookingState state, Long from, Long size) {
         User user = userRepository.findById(userId).orElseThrow(

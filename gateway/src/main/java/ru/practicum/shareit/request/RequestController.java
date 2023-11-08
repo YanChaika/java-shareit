@@ -8,6 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+
 @Controller
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
@@ -18,7 +22,7 @@ public class RequestController {
 
     @PostMapping
     public ResponseEntity<Object> createRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                @RequestBody ItemRequestDto itemRequestDto) {
+                                                @Valid @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Create request {}, userId={}", itemRequestDto, userId);
         return requestClient.createRequest(itemRequestDto, userId);
     }
@@ -31,9 +35,12 @@ public class RequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                      @RequestParam(required = false) Long from,
-                                                      @RequestParam(required = false) Long size) {
+                                                      @PositiveOrZero @RequestParam(required = false/*, defaultValue = "0"*/) Long from,
+                                                      @Positive @RequestParam(required = false/*, defaultValue = "10"*/) Long size) {
         log.info("Get requests by userId={}, from={}, size={}", userId, from, size);
+        if (from == null) {
+            return requestClient.getRequestsByUserIdWithoutPagination(userId);
+        }
         return requestClient.getRequestsByUserId(userId, from, size);
     }
 

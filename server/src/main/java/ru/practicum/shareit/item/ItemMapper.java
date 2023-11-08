@@ -20,7 +20,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.isAvailable(),
                 item.getOwnerId(),
-                item.getRequestId() != null ? item.getRequestId().getId() : null
+                item.getRequest() != null ? item.getRequest().getId() : null
         );
     }
 
@@ -32,7 +32,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.isAvailable(),
                 item.getOwnerId(),
-                item.getRequestId() != null ? item.getRequestId().getId() : null,
+                item.getRequest() != null ? item.getRequest().getId() : null,
                 lastBooking,
                 nextBooking,
                 comment

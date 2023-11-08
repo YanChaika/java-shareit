@@ -29,6 +29,6 @@ public class Item {
     private Long ownerId;
     @ManyToOne//(optional = false)
     @JoinColumn(name = "request_id")
-    private ItemRequest requestId;
+    private ItemRequest request;
 
 }

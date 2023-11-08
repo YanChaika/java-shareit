@@ -37,10 +37,12 @@ public class BookingController {
 
     @GetMapping(params = "state")
     public ResponseEntity<List<BookingFullDto>> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                                  @RequestParam(defaultValue = "ALL") String state) {
+                                                                  @RequestParam String state,
+                                                                  @RequestParam(required = false) Long from,
+                                                                  @RequestParam(required = false) Long size) {
         return ResponseEntity.ok(bookingService.getByUserIdAndState(userId, BookingState.from(state).orElseThrow(
                 () -> new ValidationException("Unknown state: UNSUPPORTED_STATUS")
-        )));
+        ), from, size));
     }
 
     @GetMapping("/owner")
@@ -56,7 +58,8 @@ public class BookingController {
             return ResponseEntity.ok(bookingService
                     .getAllBookingByItemsForUserId(userId, BookingState.ALL, from, size));
         }
-        return ResponseEntity.ok(bookingService.getAllBookingByItemsForUserId(
+        return ResponseEntity.ok(bookingService
+                .getAllBookingByItemsForUserId(
                 userId,
                 BookingState.from(state)
                         .orElseThrow(() -> new ValidationException("Unknown state: UNSUPPORTED_STATUS")),
@@ -65,8 +68,8 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<List<BookingFullDto>> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                       @RequestParam(required = false) Long from,
-                                                       @RequestParam(required = false) Long size) {
+                                                       @RequestParam Long from,
+                                                       @RequestParam Long size) {
         return ResponseEntity.ok(bookingService.getAllByUserId(userId, from, size));
     }
 }
