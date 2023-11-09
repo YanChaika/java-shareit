@@ -190,10 +190,6 @@ public class ItemServiceImpl implements ItemService {
         List<Item> itemsToCheck = new ArrayList<>();
         if ((from == null) || (size == null)) {
             itemsToCheck = itemRepository.findAll();
-        } else if (((from == 0) && (size == 0)) || (size <= 0)) {
-            throw new ValidationException("");
-        //} else if (from == 0) {
-          //  return new ArrayList<>();
         } else {
             Page<Item> itemsByPage = itemRepository.findAll(PageRequest.of(from.intValue(), size.intValue()));
             itemsToCheck = itemsByPage.toList();
@@ -261,13 +257,19 @@ public class ItemServiceImpl implements ItemService {
                 }
             }
         }
-        return itemsByUser.stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toCollection(ArrayList::new), lst -> {
-                            Collections.reverse(lst);
-                            return lst.stream();
-                        }
-                )).collect(Collectors.toCollection(ArrayList::new));
+        for (ItemDtoWithBookingDates itemDtoWithBookingDates : itemsByUser) {
+            if ((itemDtoWithBookingDates.getLastBooking() != null)
+                    || (itemDtoWithBookingDates.getNextBooking() != null)) {
+                return itemsByUser.stream()
+                        .collect(Collectors.collectingAndThen(
+                                Collectors.toCollection(ArrayList::new), lst -> {
+                                    Collections.reverse(lst);
+                                    return lst.stream();
+                                }
+                        )).collect(Collectors.toCollection(ArrayList::new));
+            }
+        }
+        return itemsByUser;
     }
 
     @Transactional
